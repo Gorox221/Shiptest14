@@ -1,0 +1,59 @@
+- type: entity
+  id: ShieldGasRegenerator
+  parent: BaseMachinePowered
+  name: shield gas regenerator
+  description: Burns stored fuel gas to rapidly bleed off shield stress while forcing the bubble offline.
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Sprite
+    sprite: Structures/Piping/Atmospherics/thermomachine.rsi
+    snapCardinals: true
+    granularLayersRendering: true
+    layers:
+    - state: freezerOff
+      map: [ "enum.PowerDeviceVisualLayers.Powered" ]
+    - state: freezerPanelOpen
+      map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
+    - state: pipe
+      map: [ "enum.PipeVisualLayers.Pipe" ]
+      renderingStrategy: Default
+  - type: Appearance
+  - type: PipeColorVisuals
+  - type: Rotatable
+  - type: AtmosPipeColor
+  - type: AtmosPipeLayers
+    spriteLayersRsiPaths:
+      enum.PipeVisualLayers.Pipe:
+        Primary: Structures/Piping/Atmospherics/thermomachine.rsi
+        Secondary: Structures/Piping/Atmospherics/thermomachine_alt1.rsi
+        Tertiary: Structures/Piping/Atmospherics/thermomachine_alt2.rsi
+  - type: GenericVisualizer
+    visuals:
+      enum.PowerDeviceVisuals.Powered:
+        enum.PowerDeviceVisualLayers.Powered:
+          True: { state: freezerOn }
+          False: { state: freezerOff }
+  - type: AtmosDevice
+    joinSystem: true
+  - type: WiresPanel
+  - type: WiresVisuals
+  - type: PipeRestrictOverlap
+  - type: NodeContainer
+    nodes:
+      pipe:
+        !type:PipeNode
+        nodeGroupID: Pipe
+        pipeDirection: South
+  - type: Transform
+    noRot: false
+  - type: ApcPowerReceiver
+    powerLoad: 5000
+  - type: ExtensionCableReceiver
+  - type: ShieldGasRegenerator
+    fuelGas: "3"
+    gasMixture:
+      volume: 1000
+    shieldHpPerFuelMole: 2.672224894447117
+    fuelMolesPerSecond: 374.342
+    activationDoAfter: 3

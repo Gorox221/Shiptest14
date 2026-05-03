@@ -103,7 +103,7 @@ public sealed partial class ShipShieldsSystem : EntitySystem
                 emitter.OverloadAccumulator = emitter.DamageOverloadTimePunishment;
 
             // if our shield is gone, AND the OverloadAccumulator is done counting down (with some padding), then...
-            if (emitter.Shield is null && emitter.OverloadAccumulator < 1.5 && power.Powered) //put the shield back up!
+            if (emitter.Shield is null && emitter.OverloadAccumulator < 1.5 && power.Powered && !emitter.ForcedOffline) //put the shield back up!
             {
                 emitter.Recharging = false; //stop boosting hp recharge now that it's up
                 var shield = ShieldEntity(parent.Value, source: uid);
@@ -115,7 +115,7 @@ public sealed partial class ShipShieldsSystem : EntitySystem
                 _audio.PlayGlobal(emitter.PowerUpSound, filter, true, emitter.PowerUpSound.Params);
             }
             // if our emitter is Overloaded, AND the shield is active, shut down the shield.
-            else if (emitter.OverloadAccumulator > 0 && emitter.Shield is not null)
+            else if ((emitter.OverloadAccumulator > 0 || emitter.ForcedOffline) && emitter.Shield is not null)
             {
                 emitter.Recharging = true; //boost hp recharge when it's down
                 UnshieldEntity(parent.Value);

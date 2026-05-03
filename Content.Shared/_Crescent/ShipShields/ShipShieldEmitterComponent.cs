@@ -57,6 +57,12 @@ public sealed partial class ShipShieldEmitterComponent : Component
     public float OverloadAccumulator = 0f;
 
     /// <summary>
+    /// External systems can force shield to remain down regardless of overload timer (e.g. plasma regenerator).
+    /// </summary>
+    [AutoNetworkedField, DataField]
+    public bool ForcedOffline = false;
+
+    /// <summary>
     /// Short grace timer after operator changes requested draw, to let power net recompute ReceivedPower.
     /// </summary>
     [DataField]
