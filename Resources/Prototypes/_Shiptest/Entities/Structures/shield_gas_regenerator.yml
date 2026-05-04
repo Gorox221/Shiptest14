@@ -1,11 +1,13 @@
 - type: entity
   id: ShieldGasRegenerator
-  parent: BaseMachinePowered
-  name: shield gas regenerator
-  description: Burns stored fuel gas to rapidly bleed off shield stress while forcing the bubble offline.
+  parent: [ BaseMachinePowered, ConstructibleMachine ]
+  name: плазменный регенератор щита
+  description: Тратит накопленную газообразную плазму, чтобы быстро снять повреждения с энергетического щита, одновременно отключая его на время регенерации.
   placement:
     mode: SnapgridCenter
   components:
+  - type: Machine
+    board: ShieldGasRegeneratorMachineCircuitboard
   - type: Sprite
     sprite: Structures/Piping/Atmospherics/thermomachine.rsi
     snapCardinals: true
@@ -49,7 +51,6 @@
     noRot: false
   - type: ApcPowerReceiver
     powerLoad: 5000
-  - type: ExtensionCableReceiver
   - type: ShieldGasRegenerator
     fuelGas: "3"
     gasMixture:

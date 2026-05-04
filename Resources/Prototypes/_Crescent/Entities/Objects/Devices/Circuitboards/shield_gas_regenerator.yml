@@ -1,0 +1,16 @@
+- type: entity
+  parent: BaseMachineCircuitboard
+  id: ShieldGasRegeneratorMachineCircuitboard
+  name: плазменный регенератор щита (машинная плата)
+  description: Машинная плата для плазменного регенератора щита.
+  components:
+  - type: Sprite
+    state: engineering
+  - type: MachineBoard
+    prototype: ShieldGasRegenerator
+    stackRequirements:
+      Manipulator: 4
+      Cable: 5
+      Glass: 3
+      Steel: 5
+      Silver: 10
