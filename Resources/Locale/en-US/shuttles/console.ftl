@@ -35,6 +35,8 @@ shuttle-console-exclusion = Exclusion area
 shuttle-console-nav-settings = Settings
 shuttle-console-iff-toggle = Show IFF
 shuttle-console-dock-toggle = Show docks
+shuttle-console-gas-fuel-thrusters-header = Gas thrusters
+shuttle-console-gas-fuel-thruster-line = {$name} — {$percent}%
 
 # MAP
 

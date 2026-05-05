@@ -66,6 +66,11 @@ public sealed class NavInterfaceState
     /// </summary>
     public bool HideCoords = false;
 
+    /// <summary>
+    /// Gas-fuel thrusters (e.g. plasma thrusters) on the shuttle grid for helm display.
+    /// </summary>
+    public List<ShuttleGasFuelThrusterState> GasFuelThrusters = new();
+
     // End Frontier fields
     public NavInterfaceState(
         float maxRange,
@@ -77,7 +82,8 @@ public sealed class NavInterfaceState
         Vector2[][]? biomeZoneLines = null,
         NetCoordinates[]? biomeZoneCoords = null,
         Color[]? biomeZoneColors = null,
-        Vector2[][]? biomeZoneFillVertices = null)
+        Vector2[][]? biomeZoneFillVertices = null,
+        List<ShuttleGasFuelThrusterState>? gasFuelThrusters = null)
     {
         MaxRange = maxRange;
         Coordinates = coordinates;
@@ -89,6 +95,7 @@ public sealed class NavInterfaceState
         BiomeZoneCoords = biomeZoneCoords ?? Array.Empty<NetCoordinates>();
         BiomeZoneColors = biomeZoneColors ?? Array.Empty<Color>();
         BiomeZoneFillVertices = biomeZoneFillVertices;
+        GasFuelThrusters = gasFuelThrusters != null ? new List<ShuttleGasFuelThrusterState>(gasFuelThrusters) : new List<ShuttleGasFuelThrusterState>();
     }
 }
 

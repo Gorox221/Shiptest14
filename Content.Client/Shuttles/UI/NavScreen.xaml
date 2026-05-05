@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 
 <controls:BoxContainer Visible="False"
               HorizontalExpand="True"
+              Orientation="Horizontal"
               xmlns:controls="https://spacestation14.io"
               xmlns:ui="clr-namespace:Content.Client.Shuttles.UI"
               xmlns:controls1="clr-namespace:Content.Client.UserInterface.Controls">
@@ -15,7 +16,7 @@ SPDX-License-Identifier: MIT
                                  VerticalAlignment="Stretch"
                                  VerticalExpand="True"
                                  HorizontalExpand="True"
-                                 Margin="5 4 10 5"/>
+                                 Margin="3 4 10 5"/>
                 <!-- Nav controls -->
                 <controls:BoxContainer Name="RightDisplayNav"
                       VerticalAlignment="Top"

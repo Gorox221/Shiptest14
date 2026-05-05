@@ -21,6 +21,8 @@ shuttle-console-exclusion = Зона отчуждения
 shuttle-console-nav-settings = Настройки
 shuttle-console-iff-toggle = Показ системы опознавания
 shuttle-console-dock-toggle = Показ стыковочных портов
+shuttle-console-gas-fuel-thrusters-header = Газовые двигатели
+shuttle-console-gas-fuel-thruster-line = {$name} — {$percent}%
 
 # MAP
 

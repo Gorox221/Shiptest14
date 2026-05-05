@@ -19,8 +19,11 @@
 using System.Numerics;
 using Content.Server.Shuttles.Systems;
 using Content.Shared.Damage;
+using Content.Shared.DeviceLinking;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Server.Shuttles.Components
 {
@@ -33,6 +36,15 @@ namespace Content.Server.Shuttles.Components
         /// </summary>
         [DataField, ViewVariables(VVAccess.ReadWrite)]
         public bool Enabled { get; set; } = true;
+
+        [DataField("onPort", customTypeSerializer: typeof(PrototypeIdSerializer<SinkPortPrototype>))]
+        public string OnPort = "On";
+
+        [DataField("offPort", customTypeSerializer: typeof(PrototypeIdSerializer<SinkPortPrototype>))]
+        public string OffPort = "Off";
+
+        [DataField("togglePort", customTypeSerializer: typeof(PrototypeIdSerializer<SinkPortPrototype>))]
+        public string TogglePort = "Toggle";
 
         /// <summary>
         /// This determines whether the thruster is actually enabled for the purposes of thrust

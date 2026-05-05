@@ -1,0 +1,106 @@
+# Plasma-fed shuttle thruster (Crescent/Shiptest): no APC power; pipes supply plasma.
+
+- type: entity
+  id: BasePlasmaThruster
+  parent: BaseStructureDynamic
+  abstract: true
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.45"
+        density: 60
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: AmbientSound
+    enabled: false
+    range: 4
+    volume: -4
+    sound:
+      path: /Audio/Effects/shuttle_thruster.ogg
+  - type: Transform
+    anchored: true
+  - type: Physics
+    bodyType: Static
+  - type: Rotatable
+    rotateWhileAnchored: true
+  - type: Thruster
+    thrust: 460
+    enabled: false
+    damage:
+      types:
+        Heat: 40
+  - type: InteractionOutline
+  - type: Sprite
+  - type: Appearance
+  - type: ThrusterVisuals
+  - type: Damageable
+    damageContainer: StructuralInorganic
+    damageModifierSet: Electronic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 300
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+  - type: StaticPrice
+    price: 450
+  - type: GuideHelp
+    guides:
+    - ShuttleCraft
+
+- type: entity
+  id: PlasmaThruster
+  parent: BasePlasmaThruster
+  name: plasma thruster
+  description: High-impulse thruster that burns piped plasma. Raises shuttle speed limits along its thrust axis while fueled.
+  components:
+  - type: Sprite
+    sprite: Structures/Shuttles/thruster.rsi
+    layers:
+    - state: base
+      map: ["enum.ThrusterVisualLayers.Base"]
+    - state: thrust
+      map: ["enum.ThrusterVisualLayers.ThrustOn"]
+      shader: unshaded
+      visible: false
+    - state: thrust_burn_unshaded
+      map: ["enum.ThrusterVisualLayers.ThrustingUnshaded"]
+      shader: unshaded
+      visible: false
+      offset: 0, 1
+  - type: PlasmaThruster
+    fuelGas: "3"
+    maxFuelMolesForDisplay: 100
+    gasMixture:
+      volume: 100
+      temperature: 293.15
+      moles:
+      - 0 # Oxygen
+      - 0 # Nitrogen
+      - 0 # CarbonDioxide
+      - 184.62 # Plasma
+    maxVelocityBonus: 10
+    fuelMolesPerSecondFiring: 25
+    minimumFuelMoles: 0.05
+    portName: pipe
+  - type: AtmosDevice
+    joinSystem: true
+  - type: PipeRestrictOverlap
+  - type: NodeContainer
+    nodes:
+      pipe:
+        !type:PipeNode
+        nodeGroupID: Pipe
+        pipeDirection: South

@@ -61,6 +61,7 @@
 
 using System.Numerics;
 using Content.Server.Audio;
+using Content.Server.DeviceLinking.Systems;
 using Content.Server.Power.EntitySystems;
 using Content.Server.Shuttles.Components;
 using Content.Shared.Damage;
@@ -68,6 +69,7 @@ using Content.Shared.Examine;
 using Content.Shared.Interaction;
 using Content.Shared.Maps;
 using Content.Shared.Physics;
+using Content.Shared.DeviceLinking.Events;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Temperature;
 using Robust.Shared.Map;
@@ -78,13 +80,17 @@ using Robust.Shared.Physics.Events;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using Robust.Shared.Prototypes;
+using Content.Shared.Atmos;
 using Content.Shared.Localizations;
 using Content.Shared.Power;
+using Content.Server._Shiptest.Shuttles;
 
 namespace Content.Server.Shuttles.Systems;
 
 public sealed class ThrusterSystem : EntitySystem
 {
+    [Dependency] private readonly IPrototypeManager _prototype = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly SharedMapSystem _mapSystem = default!;
     [Dependency] private readonly AmbientSoundSystem _ambient = default!;
@@ -93,6 +99,7 @@ public sealed class ThrusterSystem : EntitySystem
     [Dependency] private readonly SharedPointLightSystem _light = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly TurfSystem _turf = default!;
+    [Dependency] private readonly DeviceLinkSystem _deviceLink = default!;
 
     // Essentially whenever thruster enables we update the shuttle's available impulses which are used for movement.
     // This is done for each direction available.
@@ -112,6 +119,7 @@ public sealed class ThrusterSystem : EntitySystem
         SubscribeLocalEvent<ThrusterComponent, IsHotEvent>(OnIsHotEvent);
         SubscribeLocalEvent<ThrusterComponent, StartCollideEvent>(OnStartCollide);
         SubscribeLocalEvent<ThrusterComponent, EndCollideEvent>(OnEndCollide);
+        SubscribeLocalEvent<ThrusterComponent, SignalReceivedEvent>(OnSignalReceived);
 
         SubscribeLocalEvent<ThrusterComponent, ExaminedEvent>(OnThrusterExamine);
 
@@ -214,6 +222,23 @@ public sealed class ThrusterSystem : EntitySystem
         }
     }
 
+    private void OnSignalReceived(EntityUid uid, ThrusterComponent component, ref SignalReceivedEvent args)
+    {
+        if (args.Port == component.OffPort)
+            component.Enabled = false;
+        else if (args.Port == component.OnPort)
+            component.Enabled = true;
+        else if (args.Port == component.TogglePort)
+            component.Enabled = !component.Enabled;
+        else
+            return;
+
+        if (component.Enabled && CanEnable(uid, component))
+            EnableThruster(uid, component);
+        else
+            DisableThruster(uid, component);
+    }
+
     /// <summary>
     /// If the thruster rotates change the direction where the linear thrust is applied
     /// </summary>
@@ -280,6 +305,12 @@ public sealed class ThrusterSystem : EntitySystem
             shuttleComponent.LinearThrust[direction] += component.Thrust;
             DebugTools.Assert(!shuttleComponent.LinearThrusters[direction].Contains(uid));
             shuttleComponent.LinearThrusters[direction].Add(uid);
+
+            if (TryComp<PlasmaThrusterComponent>(uid, out var plasma))
+            {
+                oldShuttleComponent.LinearVelocityBonus[oldDirection] -= plasma.MaxVelocityBonus;
+                shuttleComponent.LinearVelocityBonus[direction] += plasma.MaxVelocityBonus;
+            }
         }
     }
 
@@ -298,6 +329,7 @@ public sealed class ThrusterSystem : EntitySystem
     private void OnThrusterInit(EntityUid uid, ThrusterComponent component, ComponentInit args)
     {
         _ambient.SetAmbience(uid, false);
+        _deviceLink.EnsureSinkPorts(uid, component.OnPort, component.OffPort, component.TogglePort);
 
         if (!component.Enabled)
         {
@@ -358,6 +390,9 @@ public sealed class ThrusterSystem : EntitySystem
                 shuttleComponent.LinearThrust[direction] += component.Thrust;
                 DebugTools.Assert(!shuttleComponent.LinearThrusters[direction].Contains(uid));
                 shuttleComponent.LinearThrusters[direction].Add(uid);
+
+                if (TryComp<PlasmaThrusterComponent>(uid, out var plasmaThruster))
+                    shuttleComponent.LinearVelocityBonus[direction] += plasmaThruster.MaxVelocityBonus;
 
                 // Don't just add / remove the fixture whenever the thruster fires because perf
                 if (TryComp(uid, out PhysicsComponent? physicsComponent) &&
@@ -456,6 +491,10 @@ public sealed class ThrusterSystem : EntitySystem
                 shuttleComponent.LinearThrust[direction] -= component.Thrust;
                 DebugTools.Assert(shuttleComponent.LinearThrusters[direction].Contains(uid));
                 shuttleComponent.LinearThrusters[direction].Remove(uid);
+
+                if (TryComp<PlasmaThrusterComponent>(uid, out var plasmaThruster))
+                    shuttleComponent.LinearVelocityBonus[direction] -= plasmaThruster.MaxVelocityBonus;
+
                 break;
             case ThrusterType.Angular:
                 shuttleComponent.AngularThrust -= component.Thrust;
@@ -497,7 +536,18 @@ public sealed class ThrusterSystem : EntitySystem
 
         var xform = Transform(uid);
 
-        if (!xform.Anchored || !this.IsPowered(uid, EntityManager))
+        if (!xform.Anchored)
+            return false;
+
+        if (TryComp<PlasmaThrusterComponent>(uid, out var plasmaThruster))
+        {
+            if (!PlasmaThrusterFuel.TryResolveFuelGas(_prototype, plasmaThruster.FuelGas, out var fuelGas))
+                return false;
+
+            if (plasmaThruster.Air.GetMoles(fuelGas) < plasmaThruster.MinimumFuelMoles)
+                return false;
+        }
+        else if (!this.IsPowered(uid, EntityManager))
         {
             return false;
         }

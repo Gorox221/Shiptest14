@@ -310,19 +310,24 @@ public sealed class MoverController : SharedMoverController
         if (vel.Length() == 0f)
             return Vector2.Zero;
 
-        // this math could PROBABLY be simplified for performance
-        // probably
-        //             __________________________________
-        //            / /    __   __ \2   /    __   __ \2
-        // O = I : _ /  |I * | 1/H | |  + |I * |  0  | |
-        //          V   \    |_ 0 _| /    \    |_1/V_| /
+        var dir = vel / vel.Length();
+        var dx = dir.X;
+        var dy = dir.Y;
 
-        var horizIndex = vel.X > 0 ? 1 : 3; // east else west
-        var vertIndex = vel.Y > 0 ? 2 : 0; // north else south
-        var horizComp = vel.X != 0 ? MathF.Pow(Vector2.Dot(vel, new (shuttle.LinearThrust[horizIndex] / shuttle.LinearThrust[horizIndex], 0f)), 2) : 0;
-        var vertComp = vel.Y != 0 ? MathF.Pow(Vector2.Dot(vel, new (0f, shuttle.LinearThrust[vertIndex] / shuttle.LinearThrust[vertIndex])), 2) : 0;
+        // DirectionFlag indices: South=0, East=1, North=2, West=3 — matches ThrusterSystem cardinal buckets.
+        var capXE = shuttle.BaseMaxLinearVelocity +
+                    (dx > 0 ? shuttle.LinearVelocityBonus[1] : dx < 0 ? shuttle.LinearVelocityBonus[3] : 0f);
+        var capYE = shuttle.BaseMaxLinearVelocity +
+                    (dy > 0 ? shuttle.LinearVelocityBonus[2] : dy < 0 ? shuttle.LinearVelocityBonus[0] : 0f);
 
-        return shuttle.BaseMaxLinearVelocity * vel * MathF.ReciprocalSqrtEstimate(horizComp + vertComp);
+        var invSq = 0f;
+        if (MathF.Abs(dx) > 1e-5f)
+            invSq += (dx / capXE) * (dx / capXE);
+        if (MathF.Abs(dy) > 1e-5f)
+            invSq += (dy / capYE) * (dy / capYE);
+
+        var t = invSq > 0f ? 1f / MathF.Sqrt(invSq) : 0f;
+        return dir * t;
     }
 
     private void HandleShuttleMovement(float frameTime)

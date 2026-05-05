@@ -160,5 +160,23 @@ public sealed partial class ShuttleConsoleWindow : FancyWindow,
         NavContainer.UpdateState(cState.NavState);
         MapContainer.UpdateState(cState.MapState);
         DockContainer.UpdateState(coordinates?.EntityId, cState.DockState);
+        UpdateGasFuelThrusters(cState.NavState.GasFuelThrusters);
+    }
+
+    private void UpdateGasFuelThrusters(IReadOnlyList<ShuttleGasFuelThrusterState> entries)
+    {
+        GasThrustersList.RemoveAllChildren();
+
+        foreach (var entry in entries)
+        {
+            var line = new Label
+            {
+                Text = Loc.GetString("shuttle-console-gas-fuel-thruster-line",
+                    ("name", entry.Label),
+                    ("percent", entry.FillPercent)),
+                ClipText = false,
+            };
+            GasThrustersList.AddChild(line);
+        }
     }
 }

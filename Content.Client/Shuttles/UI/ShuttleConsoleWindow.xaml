@@ -11,8 +11,8 @@ SPDX-License-Identifier: MIT
                       xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
                       xmlns:ui="clr-namespace:Content.Client.Shuttles.UI"
                       Title="{Loc 'shuttle-console-window-title'}"
-                      SetSize="960 782"
-                      MinSize="960 782">
+                      SetSize="1170 782"
+                      MinSize="1170 782">
     <BoxContainer Orientation="Vertical">
         <!-- Top row mode buttons -->
         <BoxContainer Name="ModeButtons"
@@ -41,12 +41,45 @@ SPDX-License-Identifier: MIT
         </BoxContainer>
         <!-- Contents box -->
         <BoxContainer Name="Contents"
+                      Orientation="Horizontal"
                       HorizontalAlignment="Stretch"
                       VerticalExpand="True"
                       Margin="5">
-            <ui:NavScreen Name="NavContainer" Visible="False"/>
-            <ui:MapScreen Name="MapContainer" Visible="False"/>
-            <ui:DockingScreen Name="DockContainer" Visible="False"/>
+            <BoxContainer Name="GasThrustersPanel"
+                          Orientation="Vertical"
+                          VerticalExpand="True"
+                          MinWidth="228"
+                          MaxWidth="252"
+                          Margin="4 4 4 5">
+                <controls:StripeBack MinSize="40 40">
+                    <Label Text="{Loc 'shuttle-console-gas-fuel-thrusters-header'}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                </controls:StripeBack>
+                <PanelContainer StyleClasses="Inset"
+                                VerticalExpand="True"
+                                HorizontalExpand="True"
+                                Margin="4 2 0 2">
+                    <ScrollContainer VerticalExpand="True"
+                                     HorizontalExpand="True"
+                                     HScrollEnabled="True"
+                                     MinHeight="120"
+                                     Margin="4 2 4 2">
+                        <BoxContainer Name="GasThrustersList"
+                                      Orientation="Vertical"
+                                      HorizontalExpand="True"/>
+                    </ScrollContainer>
+                </PanelContainer>
+            </BoxContainer>
+
+            <BoxContainer Name="ModeContent"
+                          Orientation="Horizontal"
+                          HorizontalExpand="True"
+                          VerticalExpand="True">
+                <ui:NavScreen Name="NavContainer" Visible="False"/>
+                <ui:MapScreen Name="MapContainer" Visible="False"/>
+                <ui:DockingScreen Name="DockContainer" Visible="False"/>
+            </BoxContainer>
         </BoxContainer>
     </BoxContainer>
 </controls:FancyWindow>

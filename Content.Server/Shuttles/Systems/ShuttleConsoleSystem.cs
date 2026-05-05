@@ -132,6 +132,7 @@ using Content.Shared.Shuttles.UI.MapObjects;
 using Content.Shared.Timing;
 using Content.Shared._Shiptest.SpaceBiomes;
 using Content.Server._Shiptest.SpaceBiomes;
+using Content.Server._Shiptest.Shuttles;
 using Robust.Server.GameObjects;
 using System.Numerics;
 using Robust.Shared.Collections;
@@ -539,8 +540,17 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
         EntityCoordinates coordinates,
         Angle angle)
     {
-        if (!Resolve(entity, ref entity.Comp1, ref entity.Comp2, false))
-            return new NavInterfaceState(SharedRadarConsoleSystem.DefaultMaxRange, GetNetCoordinates(coordinates), angle, docks, InertiaDampeningMode.Dampen);
+        var resolved = Resolve(entity, ref entity.Comp1, ref entity.Comp2, false);
+        EntityUid? fuelGrid = null;
+        if (resolved)
+            fuelGrid = entity.Comp2!.GridUid;
+        else if (_xformQuery.TryGetComponent(coordinates.EntityId, out var coordXform))
+            fuelGrid = coordXform.GridUid;
+
+        var gasFuelThrusters = GetGasFuelThrustersState(fuelGrid);
+
+        if (!resolved)
+            return new NavInterfaceState(SharedRadarConsoleSystem.DefaultMaxRange, GetNetCoordinates(coordinates), angle, docks, InertiaDampeningMode.Dampen, gasFuelThrusters: gasFuelThrusters);
 
         // Check if console is in a biome that blocks scanning (e.g., NebulaSpace)
         var consoleMapPos = _transform.ToMapCoordinates(coordinates);
@@ -554,7 +564,8 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
                 GetNetCoordinates(coordinates),
                 angle,
                 new Dictionary<NetEntity, List<DockingPortState>>(),
-                _shuttle.NfGetInertiaDampeningMode(entity));
+                _shuttle.NfGetInertiaDampeningMode(entity),
+                gasFuelThrusters: gasFuelThrusters);
         }
 
         // CorvaxGoob: collect biome zone data for radar display
@@ -566,7 +577,7 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
             out var biomeFillVertices);
 
         return new NavInterfaceState(
-            entity.Comp1.MaxRange,
+            entity.Comp1!.MaxRange,
             GetNetCoordinates(coordinates),
             angle,
             docks,
@@ -574,7 +585,39 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
             biomeZoneLines: biomeLines,
             biomeZoneCoords: biomeCoords,
             biomeZoneColors: biomeColors,
-            biomeZoneFillVertices: biomeFillVertices);
+            biomeZoneFillVertices: biomeFillVertices,
+            gasFuelThrusters: gasFuelThrusters);
+    }
+
+    private List<ShuttleGasFuelThrusterState> GetGasFuelThrustersState(EntityUid? gridUid)
+    {
+        var list = new List<ShuttleGasFuelThrusterState>();
+        if (gridUid == null || !Exists(gridUid.Value))
+            return list;
+
+        var query = AllEntityQuery<PlasmaThrusterComponent, TransformComponent, MetaDataComponent>();
+        while (query.MoveNext(out var uid, out var plasma, out var xform, out var meta))
+        {
+            if (xform.GridUid != gridUid || !xform.Anchored)
+                continue;
+
+            if (!PlasmaThrusterFuel.TryResolveFuelGas(_protMan, plasma.FuelGas, out var gas))
+                continue;
+
+            var moles = plasma.Air.GetMoles(gas);
+            var denom = Math.Max(plasma.MaxFuelMolesForDisplay, 0.01f);
+            var pct = (byte)Math.Clamp((int)(moles / denom * 100f), 0, 100);
+
+            list.Add(new ShuttleGasFuelThrusterState
+            {
+                Thruster = GetNetEntity(uid),
+                Label = meta.EntityName,
+                FillPercent = pct,
+            });
+        }
+
+        list.Sort(static (a, b) => string.Compare(a.Label, b.Label, StringComparison.OrdinalIgnoreCase));
+        return list;
     }
 
     /// <summary>

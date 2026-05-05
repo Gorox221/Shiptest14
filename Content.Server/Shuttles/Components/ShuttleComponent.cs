@@ -48,6 +48,12 @@ namespace Content.Server.Shuttles.Components
         public readonly float[] LinearThrust = new float[4];
 
         /// <summary>
+        /// Extra max linear velocity along each cardinal axis (South, East, North, West) from active plasma thrusters.
+        /// </summary>
+        [ViewVariables]
+        public readonly float[] LinearVelocityBonus = new float[4];
+
+        /// <summary>
         /// The thrusters contributing to each direction for impulse.
         /// </summary>
         // No touchy
