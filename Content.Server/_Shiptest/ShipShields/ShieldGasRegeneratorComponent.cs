@@ -2,7 +2,7 @@ using Content.Shared.Atmos;
 using Content.Shared.Atmos.Prototypes;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server._Crescent.ShipShields;
+namespace Content.Server._Shiptest.ShipShields;
 
 /// <summary>
 /// Atmos machine that consumes a configurable fuel gas from internal storage to repair shield emitter stress while forcing the shield offline.

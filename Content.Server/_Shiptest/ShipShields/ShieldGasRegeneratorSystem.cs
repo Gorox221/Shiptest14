@@ -3,10 +3,12 @@ using System.Globalization;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Atmos.Piping.Components;
 using Content.Server.Atmos.Piping.Unary.EntitySystems;
+using Content.Server._Crescent.ShipShields;
 using Content.Server.NodeContainer.EntitySystems;
 using Content.Server.NodeContainer.NodeGroups;
 using Content.Server.NodeContainer.Nodes;
 using Content.Shared._Crescent.ShipShields;
+using Content.Shared._Shiptest.ShipShields;
 using Content.Shared.Atmos;
 using Content.Shared.Atmos.Prototypes;
 using Content.Shared.DoAfter;
@@ -15,7 +17,7 @@ using Content.Shared.Popups;
 using Content.Shared.UserInterface;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server._Crescent.ShipShields;
+namespace Content.Server._Shiptest.ShipShields;
 
 public sealed class ShieldGasRegeneratorSystem : EntitySystem
 {
