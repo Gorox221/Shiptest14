@@ -1,4 +1,36 @@
 - type: entity
+  id: PlasmaThrusterMachineCircuitboard
+  parent: BaseMachineCircuitboard
+  name: плазменный ракетный двигатель (машинная плата)
+  components:
+  - type: Sprite
+    state: supply
+  - type: MachineBoard
+    prototype: PlasmaThruster
+    stackRequirements:
+      Manipulator: 4
+      Steel: 5
+
+- type: entity
+  parent: BaseMachineCircuitboard
+  id: ShieldGasRegeneratorMachineCircuitboard
+  name: плазменный регенератор щита (машинная плата)
+  description: Машинная плата для плазменного регенератора щита.
+  components:
+  - type: Sprite
+    state: engineering
+  - type: MachineBoard
+    prototype: ShieldGasRegenerator
+    stackRequirements:
+      Manipulator: 4
+      Cable: 5
+      Glass: 3
+      Steel: 5
+      Silver: 10
+
+# Shield Emitters
+
+- type: entity
   parent: BaseMachineCircuitboard
   id: ShieldEmitterT1MachineCircuitboard
   name: генератор энергетического щита (машинная плата) (T1)

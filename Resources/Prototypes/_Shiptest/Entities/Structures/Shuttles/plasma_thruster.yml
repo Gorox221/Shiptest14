@@ -62,12 +62,12 @@
 
 - type: entity
   id: PlasmaThruster
-  parent: BasePlasmaThruster
-  name: plasma thruster
-  description: High-impulse thruster that burns piped plasma. Raises shuttle speed limits along its thrust axis while fueled.
+  parent: [ BasePlasmaThruster, ConstructibleMachine ]
+  name: плазменный ракетный двигатель
+  description: Улучшенный ускоритель, позволяющий шаттла разгоняться до огромных скоростей.
   components:
   - type: Sprite
-    sprite: Structures/Shuttles/thruster.rsi
+    sprite: _Shiptest/Structures/thruster_plasma.rsi
     layers:
     - state: base
       map: ["enum.ThrusterVisualLayers.Base"]
@@ -104,3 +104,24 @@
         !type:PipeNode
         nodeGroupID: Pipe
         pipeDirection: South
+  - type: Machine
+    board: PlasmaThrusterMachineCircuitboard
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 600
+      behaviors:
+        - !type:DoActsBehavior
+          acts: ["Destruction"]
+    - trigger:
+        !type:DamageTrigger
+        damage: 300
+      behaviors:
+        - !type:DoActsBehavior
+          acts: ["Destruction"]
+        - !type:PlaySoundBehavior
+          sound:
+            collection: MetalBreak
+        - !type:ChangeConstructionNodeBehavior
+          node: machineFrame

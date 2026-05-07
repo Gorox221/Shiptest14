@@ -257,6 +257,7 @@
   - ComputerIFFCircuitboard # CorvaxGoob-IIF-Improves
   - ShuttleConsoleCircuitboard
   - ThrusterMachineCircuitboard
+  - PlasmaThrusterMachineCircuitboard
   - GyroscopeMachineCircuitboard
   - MiniGravityGeneratorCircuitboard
   - MachineFTLDriveCircuitboard # Frontier

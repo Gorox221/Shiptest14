@@ -359,6 +359,12 @@
 
 - type: latheRecipe
   parent: [ BaseCircuitboardRecipe, BaseSupplyMachineRecipeCategory ]
+  id: PlasmaThrusterMachineCircuitboard
+  icon: { sprite: _Shiptest/Structures/thruster_plasma.rsi, state: base } # Shiptest
+  result: PlasmaThrusterMachineCircuitboard
+
+- type: latheRecipe
+  parent: [ BaseCircuitboardRecipe, BaseSupplyMachineRecipeCategory ]
   id: GyroscopeMachineCircuitboard
   icon: { sprite:  Structures/Shuttles/gyroscope.rsi, state: base } # Goobstation
   result: GyroscopeMachineCircuitboard
