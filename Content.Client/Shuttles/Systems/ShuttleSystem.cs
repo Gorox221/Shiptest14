@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Client._Shiptest.SpaceBiomes;
 using Robust.Client.Graphics;
 
 namespace Content.Client.Shuttles.Systems;
@@ -17,11 +18,13 @@ public sealed partial class ShuttleSystem
         base.Initialize();
         InitializeEmergency();
         _overlays.AddOverlay(new FtlArrivalOverlay());
+        _overlays.AddOverlay(new SpaceWrapTransitionOverlay());
     }
 
     public override void Shutdown()
     {
         base.Shutdown();
         _overlays.RemoveOverlay<FtlArrivalOverlay>();
+        _overlays.RemoveOverlay<SpaceWrapTransitionOverlay>();
     }
 }

@@ -29,7 +29,6 @@ using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Physics.Components;
-using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
@@ -41,7 +40,6 @@ public sealed partial class MapScreen : BoxContainer
     [Dependency] private readonly IEntityManager _entManager = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IMapManager _mapManager = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
     private readonly SharedAudioSystem _audio;
     private readonly SharedMapSystem _maps;
     private readonly ShuttleSystem _shuttles;
@@ -60,10 +58,6 @@ public sealed partial class MapScreen : BoxContainer
 
     private TimeSpan _nextPing;
     private TimeSpan _pingCooldown = TimeSpan.FromSeconds(3);
-    private TimeSpan _nextMapDequeue;
-
-    private float _minMapDequeue = 0.05f;
-    private float _maxMapDequeue = 0.25f;
 
     private StyleBoxFlat _ftlStyle;
 
@@ -73,6 +67,7 @@ public sealed partial class MapScreen : BoxContainer
     private readonly Dictionary<MapId, BoxContainer> _mapHeadings = new();
     private readonly Dictionary<MapId, List<IMapObject>> _mapObjects = new();
     private readonly List<(MapId mapId, IMapObject mapobj)> _pendingMapObjects = new();
+    private readonly List<IMapObject> _edgeBiomesRadarScratch = new();
 
     /// <summary>
     /// Store the names of map object controls for re-sorting later.
@@ -125,6 +120,7 @@ public sealed partial class MapScreen : BoxContainer
         _exclusions = state.Exclusions;
         _biomeZones = state.BiomeZones;
         _scanningBlocked = state.ScanningBlocked;
+        MapRadar.SetMapPanClamp(state.MapPanClampActive, state.MapPanClampMap, state.MapPanClampMin, state.MapPanClampMax);
         _state = state.FTLState;
         _ftlTime = state.FTLTime;
         MapRadar.InFtl = true;
@@ -231,15 +227,9 @@ public sealed partial class MapScreen : BoxContainer
         }
 
         RebuildMapObjects();
-        BumpMapDequeue();
 
         _nextPing = _timing.CurTime + _pingCooldown;
         MapRebuildButton.Disabled = true;
-    }
-
-    private void BumpMapDequeue()
-    {
-        _nextMapDequeue = _timing.CurTime + TimeSpan.FromSeconds(_random.NextFloat(_minMapDequeue, _maxMapDequeue));
     }
 
     private void MapRebuildPressed(BaseButton.ButtonEventArgs obj)
@@ -260,7 +250,7 @@ public sealed partial class MapScreen : BoxContainer
     }
 
     /// <summary>
-    /// Gets all map objects at time of ping and adds them to pending to be added over time.
+    /// Gets all map objects at time of ping and adds them to the UI immediately.
     /// </summary>
     private void RebuildMapObjects()
     {
@@ -376,9 +366,12 @@ public sealed partial class MapScreen : BoxContainer
                 _pendingMapObjects.Add((mapComp.MapId, beacon));
             }
 
-            // _Shiptest: Add biome zones for this map
+            // _Shiptest: Add biome zones for this map (skip synthetic map edge — not a scannable object)
             foreach (var biomeZone in _biomeZones)
             {
+                if (biomeZone.BiomeId == SpaceMapWorldBounds.EdgeBiomeId)
+                    continue;
+
                 var coords = _entManager.GetCoordinates(biomeZone.Coordinates);
                 if (_xformSystem.ToMapCoordinates(coords).MapId != mapComp.MapId)
                     continue;
@@ -412,6 +405,13 @@ public sealed partial class MapScreen : BoxContainer
 
             return (yMapPos.Position - shuttlePos).Length().CompareTo((xMapPos.Position - shuttlePos).Length());
         });
+
+        foreach (var entry in _pendingMapObjects)
+        {
+            AddMapObject(entry.mapId, entry.mapobj);
+        }
+
+        _pendingMapObjects.Clear();
     }
 
     /// <summary>
@@ -456,7 +456,6 @@ public sealed partial class MapScreen : BoxContainer
     public void SetMap(MapId mapId, Vector2 position)
     {
         MapRadar.SetMap(mapId, position);
-        MapRadar.Offset = position;
     }
 
     /// <summary>
@@ -603,14 +602,6 @@ public sealed partial class MapScreen : BoxContainer
 
         var curTime = _timing.CurTime;
 
-        if (_nextMapDequeue < curTime && _pendingMapObjects.Count > 0)
-        {
-            var mapObj = _pendingMapObjects[^1];
-            _pendingMapObjects.RemoveAt(_pendingMapObjects.Count - 1);
-            AddMapObject(mapObj.mapId, mapObj.mapobj);
-            BumpMapDequeue();
-        }
-
         if (!IsFTLBlocked() && _nextPing < curTime)
         {
             MapRebuildButton.Disabled = false;
@@ -622,6 +613,20 @@ public sealed partial class MapScreen : BoxContainer
 
     protected override void Draw(DrawingHandleScreen handle)
     {
+        _edgeBiomesRadarScratch.Clear();
+        foreach (var z in _biomeZones)
+        {
+            if (z.BiomeId != SpaceMapWorldBounds.EdgeBiomeId)
+                continue;
+
+            var coords = _entManager.GetCoordinates(z.Coordinates);
+            if (_xformSystem.ToMapCoordinates(coords).MapId != MapRadar.ViewingMap)
+                continue;
+
+            _edgeBiomesRadarScratch.Add(z);
+        }
+
+        MapRadar.SetEdgeBiomeOverlay(_edgeBiomesRadarScratch);
         MapRadar.ScanningBlocked = _scanningBlocked;
         MapRadar.SetMapObjects(_mapObjects);
         base.Draw(handle);

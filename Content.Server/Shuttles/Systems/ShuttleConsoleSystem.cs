@@ -165,6 +165,8 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
 
     [Dependency] private readonly _Lavaland.Shuttles.Systems.DockingConsoleSystem _dockingConsole = default!; // Lavaland Change: FTL
     [Dependency] private readonly Content.Server._Shiptest.SpaceBiomes.SpaceBiomeSystem _biomeSystem = default!;
+    [Dependency] private readonly SpaceBiomeGridSystem _spaceBiomeGrid = default!;
+    [Dependency] private readonly IMapManager _mapManager = default!;
 
     private EntityQuery<MetaDataComponent> _metaQuery;
     private EntityQuery<TransformComponent> _xformQuery;
@@ -668,6 +670,8 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
             colorsList.Add(biomeProto.MapColor);
         }
 
+        AppendMapWorldEdgeNavData(refMapId, linesList, coordsList, colorsList, fillList);
+
         lines = linesList.ToArray();
         coords = coordsList.ToArray();
         colors = colorsList.ToArray();
@@ -834,12 +838,31 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
             shuttleMapId = gridXform.MapID;
         GetBiomeZones(ref biomeZones, shuttleMapId);
 
+        var panClampActive = false;
+        var panClampMap = MapId.Nullspace;
+        Vector2 panClampMin = default;
+        Vector2 panClampMax = default;
+        if (shuttleMapId.HasValue &&
+            _spaceBiomeGrid.TryGetWrapState(out var wrapMapId, out _, out var anchor) &&
+            wrapMapId == shuttleMapId.Value)
+        {
+            var ib = SpaceMapWorldBounds.GetInteriorBounds(anchor);
+            panClampActive = true;
+            panClampMap = wrapMapId;
+            panClampMin = ib.BottomLeft;
+            panClampMax = ib.TopRight;
+        }
+
         return new ShuttleMapInterfaceState(
             ftlState,
             stateDuration,
             beacons ?? new List<ShuttleBeaconObject>(),
             exclusions ?? new List<ShuttleExclusionObject>(),
-            biomeZones);
+            biomeZones,
+            mapPanClampActive: panClampActive,
+            mapPanClampMap: panClampMap,
+            mapPanClampMin: panClampMin,
+            mapPanClampMax: panClampMax);
     }
 
     /// <summary>
@@ -883,5 +906,122 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
                 biomeProto.MapColor,
                 biomeProto.BlocksScanning));
         }
+
+        AppendMapWorldEdgeBiomes(ref biomeZones, shuttleMapId);
+    }
+
+    private static Vector2[] MapEdgeStripOutline(float halfW, float halfH)
+    {
+        var tl = new Vector2(-halfW, -halfH);
+        var tr = new Vector2(halfW, -halfH);
+        var br = new Vector2(halfW, halfH);
+        var bl = new Vector2(-halfW, halfH);
+        return new Vector2[] { tl, tr, tr, br, br, bl, bl, tl };
+    }
+
+    private static Vector2[] MapEdgeStripFill(float halfW, float halfH)
+    {
+        return new Vector2[]
+        {
+            new(-halfW, -halfH),
+            new(-halfW, halfH),
+            new(halfW, halfH),
+            new(halfW, -halfH),
+        };
+    }
+
+    private void AppendMapWorldEdgeBiomes(ref List<BiomeZoneObject>? biomeZones, MapId? shuttleMapId)
+    {
+        if (!_spaceBiomeGrid.TryGetWrapState(out var mapId, out _, out var anchor))
+            return;
+
+        if (shuttleMapId.HasValue && shuttleMapId.Value != mapId)
+            return;
+
+        var bounds = SpaceMapWorldBounds.GetInteriorBounds(anchor);
+        var outer = SpaceMapWorldBounds.OutsideMapFillExtent;
+        var midX = (bounds.Left + bounds.Right) * 0.5f;
+        var midY = (bounds.Bottom + bounds.Top) * 0.5f;
+        var mapUid = _mapManager.GetMapEntityId(mapId);
+        var edgeColor = Color.FromHex("#000000");
+
+        var edgeObjects = new List<BiomeZoneObject>(4);
+
+        void AddOuterFill(Vector2 center, float halfW, float halfH)
+        {
+            var coords = GetNetCoordinates(new EntityCoordinates(mapUid, center));
+            var lines = MapEdgeStripOutline(halfW, halfH);
+            var fill = MapEdgeStripFill(halfW, halfH);
+            var radius = MathF.Sqrt(halfW * halfW + halfH * halfH);
+            edgeObjects.Add(new BiomeZoneObject(
+                coords,
+                lines,
+                fill,
+                radius,
+                SpaceMapWorldBounds.EdgeBiomeId,
+                "map edge",
+                edgeColor,
+                blocksScanning: false));
+        }
+
+        // Full void outside the playable interior (wide bands so corners are covered).
+        var halfWHoriz = bounds.Width * 0.5f + outer;
+        var halfHVert = bounds.Height * 0.5f + outer;
+        AddOuterFill(new Vector2(midX, bounds.Bottom - outer * 0.5f), halfWHoriz, outer * 0.5f);
+        AddOuterFill(new Vector2(midX, bounds.Top + outer * 0.5f), halfWHoriz, outer * 0.5f);
+        AddOuterFill(new Vector2(bounds.Left - outer * 0.5f, midY), outer * 0.5f, halfHVert);
+        AddOuterFill(new Vector2(bounds.Right + outer * 0.5f, midY), outer * 0.5f, halfHVert);
+
+        var existing = biomeZones ?? new List<BiomeZoneObject>();
+        var merged = new List<BiomeZoneObject>(existing.Count + edgeObjects.Count);
+        merged.AddRange(edgeObjects);
+        merged.AddRange(existing);
+        biomeZones = merged;
+    }
+
+    private void AppendMapWorldEdgeNavData(
+        MapId refMapId,
+        List<Vector2[]> linesList,
+        List<NetCoordinates> coordsList,
+        List<Color> colorsList,
+        List<Vector2[]> fillList)
+    {
+        if (!_spaceBiomeGrid.TryGetWrapState(out var mapId, out _, out var anchor))
+            return;
+
+        if (mapId != refMapId)
+            return;
+
+        var bounds = SpaceMapWorldBounds.GetInteriorBounds(anchor);
+        var outer = SpaceMapWorldBounds.OutsideMapFillExtent;
+        var midX = (bounds.Left + bounds.Right) * 0.5f;
+        var midY = (bounds.Bottom + bounds.Top) * 0.5f;
+        var mapUid = _mapManager.GetMapEntityId(mapId);
+        var edgeColor = Color.FromHex("#000000");
+
+        var eLines = new List<Vector2[]>(4);
+        var eCoords = new List<NetCoordinates>(4);
+        var eColors = new List<Color>(4);
+        var eFills = new List<Vector2[]>(4);
+
+        void AddOuterFill(Vector2 center, float halfW, float halfH)
+        {
+            eCoords.Add(GetNetCoordinates(new EntityCoordinates(mapUid, center)));
+            eLines.Add(MapEdgeStripOutline(halfW, halfH));
+            eColors.Add(edgeColor);
+            eFills.Add(MapEdgeStripFill(halfW, halfH));
+        }
+
+        var halfWHoriz = bounds.Width * 0.5f + outer;
+        var halfHVert = bounds.Height * 0.5f + outer;
+        AddOuterFill(new Vector2(midX, bounds.Bottom - outer * 0.5f), halfWHoriz, outer * 0.5f);
+        AddOuterFill(new Vector2(midX, bounds.Top + outer * 0.5f), halfWHoriz, outer * 0.5f);
+        AddOuterFill(new Vector2(bounds.Left - outer * 0.5f, midY), outer * 0.5f, halfHVert);
+        AddOuterFill(new Vector2(bounds.Right + outer * 0.5f, midY), outer * 0.5f, halfHVert);
+
+        linesList.InsertRange(0, eLines);
+        coordsList.InsertRange(0, eCoords);
+        colorsList.InsertRange(0, eColors);
+        fillList.InsertRange(0, eFills);
     }
 }

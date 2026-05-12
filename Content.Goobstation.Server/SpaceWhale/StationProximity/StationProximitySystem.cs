@@ -1,13 +1,8 @@
 using Content.Goobstation.Common.CCVar;
-using Content.Server.Popups;
 using Content.Server.Station.Components;
-using Content.Goobstation.Server.MobCaller;
 using Content.Shared.Humanoid;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
-using Content.Shared.Popups;
-using Robust.Server.Audio;
-using Robust.Shared.Audio;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Timing;
@@ -19,9 +14,7 @@ namespace Content.Goobstation.Server.SpaceWhale.StationProximity;
 public sealed class StationProximitySystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly PopupSystem _popup = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly AudioSystem _audio = default!;
     [Dependency] private readonly IConfigurationManager _cfg = default!;
 
     private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(60); // le hardcode major
@@ -136,39 +129,5 @@ public sealed class StationProximitySystem : EntitySystem
                 RemComp<SpaceWhaleTargetComponent>(humanoid);
             }
         }
-        else
-            HandleFarFromStation(humanoid);
-    }
-
-    private void HandleFarFromStation(EntityUid entity) // basically handles space whale spawnings
-    {
-        if (HasComp<SpaceWhaleTargetComponent>(entity))
-            return;
-
-        _popup.PopupEntity(
-            Loc.GetString("station-proximity-far-from-station"),
-            entity,
-            entity,
-            PopupType.LargeCaution);
-
-        _audio.PlayEntity(new SoundPathSpecifier("/Audio/_Goobstation/Ambience/SpaceWhale/leviathan-appear.ogg"),
-            entity,
-            entity,
-            AudioParams.Default.WithVolume(1f));
-
-        // Spawn a dummy entity at the player's location and lock it onto the player
-        var dummy = Spawn(null, Transform(entity).Coordinates);
-        _transform.SetParent(dummy, entity);
-        var mobCaller = EnsureComp<MobCallerComponent>(dummy); // assign the goidacaller to the dummy
-
-        mobCaller.SpawnProto = "SpaceLeviathanDespawn";
-        mobCaller.MaxAlive = 1; // nuh uh
-        mobCaller.MinDistance = 100f; // should be far away
-        mobCaller.NeedAnchored = false;
-        mobCaller.NeedPower = false;
-        mobCaller.SpawnSpacing = TimeSpan.FromSeconds(65); // to give the guy some time to get back to the station + prevent him from like, QSI-ing to the station to summon the worm in the station lmao, also bru these 5 seconds are really important
-
-        var targetComp = EnsureComp<SpaceWhaleTargetComponent>(entity);// track the dummy on the player
-        targetComp.Entity = dummy;
     }
 }

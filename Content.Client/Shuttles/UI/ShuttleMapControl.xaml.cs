@@ -26,6 +26,7 @@ using Robust.Shared.Collections;
 using Robust.Shared.Input;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
+using Robust.Shared.Maths;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -71,6 +72,10 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
     /// </summary>
     public bool ScanningBlocked = false;
 
+    private bool _mapPanClampActive;
+    private MapId _mapPanClampMap;
+    private Box2 _mapPanClampInterior;
+
     /// <summary>
     /// Raised when a request to FTL to a particular spot is raised.
     /// </summary>
@@ -85,6 +90,11 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
 
     // Per frame data to avoid re-allocating
     private readonly List<IMapObject> _mapObjects = new();
+    /// <summary>
+    /// Map edge void (not scannable); drawn under scanned objects.
+    /// </summary>
+    private readonly List<IMapObject> _edgeBiomeOverlay = new();
+    private readonly List<IMapObject> _mapDrawBuffer = new();
     private readonly Dictionary<Color, List<Vector2>> _verts = new();
     private readonly Dictionary<Color, List<Vector2>> _edges = new();
     private readonly Dictionary<Color, List<(Vector2, string)>> _strings = new();
@@ -107,8 +117,49 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
     public void SetMap(MapId mapId, Vector2 offset, bool recentering = false)
     {
         ViewingMap = mapId;
-        TargetOffset = offset;
+        TargetOffset = ClampMapViewCenter(offset);
         Recentering = recentering;
+        if (!recentering)
+            Offset = TargetOffset;
+    }
+
+    public void SetMapPanClamp(bool active, MapId mapId, Vector2 min, Vector2 max)
+    {
+        _mapPanClampActive = active && mapId != MapId.Nullspace;
+        _mapPanClampMap = mapId;
+        _mapPanClampInterior = new Box2(min, max);
+        ApplyMapPanClamp();
+    }
+
+    private Vector2 ClampMapViewCenter(Vector2 center)
+    {
+        if (!_mapPanClampActive || ViewingMap != _mapPanClampMap)
+            return center;
+
+        var wr = WorldRange;
+        var minX = _mapPanClampInterior.Left + wr;
+        var maxX = _mapPanClampInterior.Right - wr;
+        float cx;
+        if (minX > maxX)
+            cx = (_mapPanClampInterior.Left + _mapPanClampInterior.Right) * 0.5f;
+        else
+            cx = Math.Clamp(center.X, minX, maxX);
+
+        var minY = _mapPanClampInterior.Bottom + wr;
+        var maxY = _mapPanClampInterior.Top - wr;
+        float cy;
+        if (minY > maxY)
+            cy = (_mapPanClampInterior.Bottom + _mapPanClampInterior.Top) * 0.5f;
+        else
+            cy = Math.Clamp(center.Y, minY, maxY);
+
+        return new Vector2(cx, cy);
+    }
+
+    private void ApplyMapPanClamp()
+    {
+        Offset = ClampMapViewCenter(Offset);
+        TargetOffset = ClampMapViewCenter(TargetOffset);
     }
 
     public void SetShuttle(EntityUid? entity)
@@ -123,6 +174,7 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
             return;
 
         base.MouseMove(args);
+        ApplyMapPanClamp();
     }
 
     protected override void KeyBindUp(GUIBoundKeyEventArgs args)
@@ -165,6 +217,7 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
         }
 
         base.MouseWheel(args);
+        ApplyMapPanClamp();
     }
 
     private void DrawParallax(DrawingHandleScreen handle)
@@ -259,8 +312,13 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
         if (ViewingMap == MapId.Nullspace)
             return;
 
-        var mapObjects = _mapObjects;
+        _mapDrawBuffer.Clear();
+        _mapDrawBuffer.AddRange(_edgeBiomeOverlay);
+        _mapDrawBuffer.AddRange(_mapObjects);
+        var mapObjects = _mapDrawBuffer;
+
         DrawRecenter();
+        ApplyMapPanClamp();
 
         if (InFtl || ScanningBlocked || mapObjects.Count == 0)
         {
@@ -346,6 +404,7 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
             var adjustedCenter = Vector2.Transform(mapCoords.Position, matty);
             var localCenter = ScalePosition(adjustedCenter with { Y = -adjustedCenter.Y });
             var color = biome.Color;
+            var isMapEdge = biome.BiomeId == SpaceMapWorldBounds.EdgeBiomeId;
 
             // Draw fill for grid-based biomes (squares)
             if (biome.FillVertices != null && biome.FillVertices.Length >= 4)
@@ -365,8 +424,11 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
                 fillVerts[4] = fillVerts[0]; // Copy for triangle 2
                 fillVerts[5] = fillVerts[2]; // Copy for triangle 2
 
-                // Draw filled square with low alpha
-                handle.DrawPrimitives(DrawPrimitiveTopology.TriangleList, fillVerts, color.WithAlpha(0.15f));
+                // Draw filled square with low alpha (map edge: fully opaque black)
+                if (isMapEdge)
+                    handle.DrawPrimitives(DrawPrimitiveTopology.TriangleList, fillVerts, Color.Black);
+                else
+                    handle.DrawPrimitives(DrawPrimitiveTopology.TriangleList, fillVerts, color.WithAlpha(0.15f));
             }
 
             // Draw each boundary line segment
@@ -378,7 +440,10 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
                 var start = localCenter + new Vector2(bl.X, -bl.Y) * MinimapScale;
                 var end = localCenter + new Vector2(br.X, -br.Y) * MinimapScale;
 
-                handle.DrawLine(start, end, color.WithAlpha(0.6f));
+                if (isMapEdge)
+                    handle.DrawLine(start, end, Color.Black);
+                else
+                    handle.DrawLine(start, end, color.WithAlpha(0.6f));
             }
         }
 
@@ -678,6 +743,16 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
         }
 
         return foundBeacon != default;
+    }
+
+    /// <summary>
+    /// Synthetic map-edge zones (not shown in scanned object list); drawn first under other map objects.
+    /// </summary>
+    public void SetEdgeBiomeOverlay(IReadOnlyList<IMapObject>? overlay)
+    {
+        _edgeBiomeOverlay.Clear();
+        if (overlay != null && overlay.Count > 0)
+            _edgeBiomeOverlay.AddRange(overlay);
     }
 
     /// <summary>

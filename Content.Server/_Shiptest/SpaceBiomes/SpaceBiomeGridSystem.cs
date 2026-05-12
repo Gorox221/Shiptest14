@@ -2,6 +2,7 @@ using System.Numerics;
 using Content.Server.Station.Components;
 using Content.Server.Station.Events;
 using Content.Server.Station.Systems;
+using Content.Shared.GameTicking;
 using Content.Shared._Shiptest.SpaceBiomes;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
@@ -33,8 +34,19 @@ public sealed class SpaceBiomeGridSystem : EntitySystem
     [Dependency] private readonly TransformSystem _transform = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IPrototypeManager _protoMan = default!;
+    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private readonly SpaceMapBoundarySystem _mapBoundary = default!;
 
     private ISawmill _sawmill = default!;
+
+    /// <summary>
+    /// World anchor used for biome layout and world bounds (set once when the main station grid initializes).
+    /// </summary>
+    private Vector2 _wrapAnchor;
+
+    private EntityUid _wrapMapEntity;
+    private MapId _wrapMapId = MapId.Nullspace;
+    private bool _wrapInitialized;
 
     /// <summary>
     /// Size of each grid cell in meters.
@@ -77,6 +89,25 @@ public sealed class SpaceBiomeGridSystem : EntitySystem
         base.Initialize();
         _sawmill = IoCManager.Resolve<ILogManager>().GetSawmill("biome_grid");
         SubscribeLocalEvent<StationPostInitEvent>(OnStationPostInit);
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestartCleanup);
+    }
+
+    private void OnRoundRestartCleanup(RoundRestartCleanupEvent ev)
+    {
+        _wrapInitialized = false;
+        _wrapMapEntity = EntityUid.Invalid;
+        _wrapMapId = MapId.Nullspace;
+    }
+
+    /// <summary>
+    /// When set, space maps use this anchor for biome layout and <see cref="SpaceMapWorldBounds"/> (set once when the main station grid initializes).
+    /// </summary>
+    public bool TryGetWrapState(out MapId mapId, out EntityUid mapEntity, out Vector2 anchor)
+    {
+        mapId = _wrapMapId;
+        mapEntity = _wrapMapEntity;
+        anchor = _wrapAnchor;
+        return _wrapInitialized && _wrapMapEntity.IsValid();
     }
 
     private void OnStationPostInit(ref StationPostInitEvent ev)
@@ -137,6 +168,13 @@ public sealed class SpaceBiomeGridSystem : EntitySystem
                 }
             }
         }
+
+        _wrapAnchor = stationCenter;
+        _wrapMapId = mapId;
+        _wrapMapEntity = _mapManager.GetMapEntityId(mapId);
+        _wrapInitialized = true;
+
+        _mapBoundary.CreateBoundaries(mapId, stationCenter);
 
         _sawmill.Info($"Biome grid initialized: {spawnedCount} biomes, {emptyCount} empty cells");
     }
@@ -264,19 +302,20 @@ public sealed class SpaceBiomeGridSystem : EntitySystem
 
     /// <summary>
     /// Gets the biome ID at a given world position by checking which grid cell it falls into.
+    /// Outside the 19×1500 m grid around the round-start anchor returns <see cref="DefaultSpace"/> (no toroidal wrap).
+    /// <paramref name="stationCenter"/> is used only if the grid was never initialized this round.
     /// </summary>
     public string GetBiomeAt(Vector2 worldPos, Vector2 stationCenter)
     {
-        // Convert world position to grid coordinates
-        // stationCenter is at the center of the grid (cell 9,9)
         var halfGrid = GridSize / 2; // 9
-        
-        var gridX = (int)MathF.Floor((worldPos.X - stationCenter.X) / CellSize) + halfGrid;
-        var gridY = (int)MathF.Floor((worldPos.Y - stationCenter.Y) / CellSize) + halfGrid;
+        var anchor = _wrapInitialized ? _wrapAnchor : stationCenter;
+        var rel = worldPos - anchor;
 
-        // Clamp to grid bounds
-        gridX = Math.Clamp(gridX, 0, GridSize - 1);
-        gridY = Math.Clamp(gridY, 0, GridSize - 1);
+        var gridX = (int)MathF.Floor(rel.X / CellSize) + halfGrid;
+        var gridY = (int)MathF.Floor(rel.Y / CellSize) + halfGrid;
+
+        if (gridX < 0 || gridX >= GridSize || gridY < 0 || gridY >= GridSize)
+            return "DefaultSpace";
 
         // Get biome from grid
         var cellUid = _gridCells[gridX, gridY];

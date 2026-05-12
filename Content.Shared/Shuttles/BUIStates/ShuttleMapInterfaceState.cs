@@ -8,7 +8,9 @@ using Content.Shared.Shuttles.Systems;
 using Content.Shared.Shuttles.UI.MapObjects;
 using Content.Shared.Timing;
 using Content.Shared._Shiptest.SpaceBiomes;
+using Robust.Shared.Map;
 using Robust.Shared.Serialization;
+using System.Numerics;
 
 namespace Content.Shared.Shuttles.BUIStates;
 
@@ -43,13 +45,29 @@ public sealed class ShuttleMapInterfaceState
     /// </summary>
     public bool ScanningBlocked = false;
 
+    /// <summary>
+    /// When true, shuttle map view center must stay within <see cref="MapPanClampMin"/>..<see cref="MapPanClampMax"/>
+    /// for <see cref="MapPanClampMap"/> so the visible radar square does not leave the playable interior.
+    /// </summary>
+    public readonly bool MapPanClampActive;
+
+    public readonly MapId MapPanClampMap;
+
+    public readonly Vector2 MapPanClampMin;
+
+    public readonly Vector2 MapPanClampMax;
+
     public ShuttleMapInterfaceState(
         FTLState ftlState,
         StartEndTime ftlTime,
         List<ShuttleBeaconObject> destinations,
         List<ShuttleExclusionObject> exclusions,
         List<BiomeZoneObject>? biomeZones = null,
-        bool scanningBlocked = false)
+        bool scanningBlocked = false,
+        bool mapPanClampActive = false,
+        MapId mapPanClampMap = default,
+        Vector2 mapPanClampMin = default,
+        Vector2 mapPanClampMax = default)
     {
         FTLState = ftlState;
         FTLTime = ftlTime;
@@ -57,5 +75,9 @@ public sealed class ShuttleMapInterfaceState
         Exclusions = exclusions;
         BiomeZones = biomeZones ?? new List<BiomeZoneObject>();
         ScanningBlocked = scanningBlocked;
+        MapPanClampActive = mapPanClampActive;
+        MapPanClampMap = mapPanClampMap;
+        MapPanClampMin = mapPanClampMin;
+        MapPanClampMax = mapPanClampMax;
     }
 }

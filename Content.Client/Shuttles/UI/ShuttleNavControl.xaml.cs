@@ -835,6 +835,7 @@ public sealed partial class ShuttleNavControl : BaseShuttleControl
             var biomeCoords = EntManager.GetCoordinates(_biomeZoneCoords[i]);
             var biomeWorldPos = biomeCoords.Position;
             var color = _biomeZoneColors[i];
+            var isMapEdge = color.R < 0.02f && color.G < 0.02f && color.B < 0.02f;
             var lines = _biomeZoneLines[i];
 
             // Draw fill for grid biomes (if fill vertices exist)
@@ -854,7 +855,10 @@ public sealed partial class ShuttleNavControl : BaseShuttleControl
                     screenVerts[4] = screenVerts[0];
                     screenVerts[5] = screenVerts[2];
 
-                    handle.DrawPrimitives(DrawPrimitiveTopology.TriangleList, screenVerts, color.WithAlpha(0.15f));
+                    if (isMapEdge)
+                        handle.DrawPrimitives(DrawPrimitiveTopology.TriangleList, screenVerts, Color.Black);
+                    else
+                        handle.DrawPrimitives(DrawPrimitiveTopology.TriangleList, screenVerts, color.WithAlpha(0.15f));
                 }
             }
 
@@ -866,7 +870,10 @@ public sealed partial class ShuttleNavControl : BaseShuttleControl
 
                 var start = Vector2.Transform(biomeStart, worldToView);
                 var end = Vector2.Transform(biomeEnd, worldToView);
-                handle.DrawLine(start, end, color.WithAlpha(0.7f));
+                if (isMapEdge)
+                    handle.DrawLine(start, end, Color.Black);
+                else
+                    handle.DrawLine(start, end, color.WithAlpha(0.7f));
             }
         }
     }
