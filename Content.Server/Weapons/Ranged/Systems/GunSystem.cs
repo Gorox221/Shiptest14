@@ -124,6 +124,7 @@ using Content.Server.Atmos.Components;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Cargo.Systems;
 using Content.Server.Power.EntitySystems;
+using Content.Server._Mono.Radar;
 using Content.Server.Weapons.Ranged.Components;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
@@ -345,7 +346,7 @@ public sealed partial class GunSystem : SharedGunSystem
                             var hit = result.HitEntity;
                             lastHit = hit;
 
-                            FireEffects(fromEffect, result.Distance, dir.Normalized().ToAngle(), hitscan, hit);
+                            FireEffects(fromEffect, result.Distance, dir.Normalized().ToAngle(), hitscan, hit, gunUid);
 
                             var ev = new HitScanReflectAttemptEvent(user, gunUid, hitscan.Reflective, dir, false, hitscan.Damage); // WD EDIT
                             RaiseLocalEvent(hit, ref ev);
@@ -413,7 +414,7 @@ public sealed partial class GunSystem : SharedGunSystem
                     }
                     else
                     {
-                        FireEffects(fromEffect, hitscan.MaxLength, dir.ToAngle(), hitscan);
+                        FireEffects(fromEffect, hitscan.MaxLength, dir.ToAngle(), hitscan, shooter: gunUid);
                     }
 
                     Audio.PlayPredicted(gun.SoundGunshotModified, gunUid, user);
@@ -638,8 +639,10 @@ public sealed partial class GunSystem : SharedGunSystem
     // TODO: Pseudo RNG so the client can predict these.
     #region Hitscan effects
 
-    private void FireEffects(EntityCoordinates fromCoordinates, float distance, Angle angle, HitscanPrototype hitscan, EntityUid? hitEntity = null)
+    private void FireEffects(EntityCoordinates fromCoordinates, float distance, Angle angle, HitscanPrototype hitscan, EntityUid? hitEntity = null, EntityUid? shooter = null)
     {
+        RaiseLocalEvent(new HitscanRadarSystem.HitscanFireEffectEvent(fromCoordinates, distance, angle, hitscan, hitEntity, shooter));
+
         // Lord
         // Forgive me for the shitcode I am about to do
         // Effects tempt me not

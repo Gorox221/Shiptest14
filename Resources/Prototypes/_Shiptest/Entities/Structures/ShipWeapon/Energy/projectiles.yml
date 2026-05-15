@@ -1,0 +1,136 @@
+- type: entity
+  id: ShipProjectilePlasmaTrap
+  name: plasma trap
+  parent: BaseBulletTrigger
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    ignoreWeaponGrid: true
+    damage:
+      types:
+        Heat: 26
+        Structural: 8
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/magic.rsi
+    layers:
+    - state: blastwave
+      shader: unshaded
+  - type: Ammo
+    muzzleFlash: null
+  - type: ShipWeaponProjectile
+  - type: IgnoresHullrotShields
+  - type: TriggerOnCollide
+  - type: ExplodeOnTrigger
+  - type: Explosive
+    explosionType: Default
+    totalIntensity: 34
+    intensitySlope: 7
+    maxIntensity: 18
+  - type: ProjectileSpeedDecay
+    stopAfterDistance: 300
+  - type: TimedDespawn
+    lifetime: 180
+  - type: RadarBlip
+    radarColor: "#6FC7FF"
+    scale: 0.8
+    requireNoGrid: true
+  - type: PointLight
+    radius: 1.4
+    color: "#73C2FB"
+    energy: 0.6
+
+- type: entity
+  id: ShipProjectileEnergyShotgunPelletT1
+  name: energy scatter bolt
+  parent: ShipKinPhysBase
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
+    layers:
+    - state: heavylaser
+      shader: unshaded
+  - type: Projectile
+    ignoreWeaponGrid: true
+    damage:
+      types:
+        Heat: 7
+        Structural: 1
+  - type: Ammo
+    muzzleFlash: null
+  - type: TimedDespawn
+    lifetime: 5.2
+
+- type: entity
+  id: ShipAmmoEnergyShotgunVolleyT1
+  categories: [ HideSpawnMenu ]
+  parent: ShipProjectileEnergyShotgunPelletT1
+  components:
+  - type: ProjectileSpread
+    proto: ShipProjectileEnergyShotgunPelletT1
+    count: 8
+    spread: 34
+
+- type: entity
+  id: ShipProjectileEnergyShotgunPelletT2
+  name: energy scatter bolt
+  parent: ShipKinPhysBase
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
+    layers:
+    - state: heavylaser
+      shader: unshaded
+  - type: Projectile
+    ignoreWeaponGrid: true
+    damage:
+      types:
+        Heat: 8
+        Structural: 1
+  - type: Ammo
+    muzzleFlash: null
+  - type: TimedDespawn
+    lifetime: 5.35
+
+- type: entity
+  id: ShipAmmoEnergyShotgunVolleyT2
+  categories: [ HideSpawnMenu ]
+  parent: ShipProjectileEnergyShotgunPelletT2
+  components:
+  - type: ProjectileSpread
+    proto: ShipProjectileEnergyShotgunPelletT2
+    count: 9
+    spread: 38
+
+- type: entity
+  id: ShipProjectileEnergyShotgunPelletT3
+  name: energy scatter bolt
+  parent: ShipKinPhysBase
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
+    layers:
+    - state: heavylaser
+      shader: unshaded
+  - type: Projectile
+    ignoreWeaponGrid: true
+    damage:
+      types:
+        Heat: 9
+        Structural: 1
+  - type: Ammo
+    muzzleFlash: null
+  - type: TimedDespawn
+    lifetime: 5.5
+
+- type: entity
+  id: ShipAmmoEnergyShotgunVolleyT3
+  categories: [ HideSpawnMenu ]
+  parent: ShipProjectileEnergyShotgunPelletT3
+  components:
+  - type: ProjectileSpread
+    proto: ShipProjectileEnergyShotgunPelletT3
+    count: 10
+    spread: 42

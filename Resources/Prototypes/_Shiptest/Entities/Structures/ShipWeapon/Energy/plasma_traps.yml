@@ -1,0 +1,185 @@
+- type: entity
+  id: WeaponShuttleEnergyPlasmaTrapT1
+  name: плазменная ловушка PT-1 «Сатурн»
+  parent: BallisticArtillery
+  description: "Орудие, стреляющее ловушками, начиненными  плазмой, удерживаемой нестабильными магнитными полями. Ловушки проходят сквозь щиты и взрываются при столкновении с кораблем. Хитрое оружие поддержки, используемое умелыми капитанами."
+  components:
+  - type: StaticPrice
+    price: 6000
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Shuttles/laser.rsi
+    layers:
+    - state: lse-1200c
+  - type: Battery
+    maxCharge: 8500
+    startingCharge: 8500
+  - type: ExaminableBattery
+  - type: Appearance
+  - type: AmmoCounter
+  - type: AutoShootGun
+  - type: GunSignalControl
+  - type: WirelessNetworkConnection
+    range: 600
+  - type: DeviceLinkSink
+    ports:
+    - SpaceArtilleryFire
+    - Toggle
+  - type: Gun
+    fireRate: 0.45
+    projectileSpeed: 65
+    minAngle: 2
+    maxAngle: 6
+    angleIncrease: 0.8
+    angleDecay: 4
+    currentAngle: 2.2
+    shotsPerBurst: 1
+    burstCooldown: 0.08
+    selectedMode: Burst
+    availableModes:
+    - Burst
+    soundGunshot:
+      path: /Audio/_Mono/Weapons/Guns/Gunshots/ship_friendship.ogg
+  - type: BatterySelfRecharger
+    autoRecharge: true
+    autoRechargeRate: 4
+  - type: SpaceArtillery
+    powerChargeRate: 380
+    powerUsePassive: 320
+  - type: Actions
+  - type: RechargeBasicEntityAmmo
+    rechargeCooldown: 0.9
+  - type: BasicEntityAmmoProvider
+    proto: ShipProjectilePlasmaTrap
+    capacity: 30
+    count: 30
+  - type: RadarBlip
+    radarColor: "#73C2FB"
+    scale: 1.1
+  - type: ShipGunType
+    shipType: Energy
+  - type: ShipGunClass
+    shipClass: Medium
+
+- type: entity
+  id: WeaponShuttleEnergyPlasmaTrapT2
+  name: плазменная ловушка PT-2 «Орион»
+  parent: BallisticArtillery
+  description: "Улучшенное Орудие, стреляющее ловушками, начиненными  плазмой. Эта модель имеет более жаропрочный корпус. Ловушки проходят сквозь щиты и взрываются при столкновении с кораблем. Хитрое оружие поддержки, используемое умелыми капитанами."
+  components:
+  - type: StaticPrice
+    price: 8800
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Shuttles/laser.rsi
+    layers:
+    - state: lse-1200c
+  - type: Battery
+    maxCharge: 10000
+    startingCharge: 10000
+  - type: ExaminableBattery
+  - type: Appearance
+  - type: AmmoCounter
+  - type: AutoShootGun
+  - type: GunSignalControl
+  - type: WirelessNetworkConnection
+    range: 600
+  - type: DeviceLinkSink
+    ports:
+    - SpaceArtilleryFire
+    - Toggle
+  - type: Gun
+    fireRate: 0.5
+    projectileSpeed: 65
+    minAngle: 2
+    maxAngle: 6.5
+    angleIncrease: 0.9
+    angleDecay: 4.2
+    currentAngle: 2.4
+    shotsPerBurst: 3
+    burstCooldown: 0.08
+    selectedMode: Burst
+    availableModes:
+    - Burst
+    soundGunshot:
+      path: /Audio/_Mono/Weapons/Guns/Gunshots/ship_friendship.ogg
+  - type: BatterySelfRecharger
+    autoRecharge: true
+    autoRechargeRate: 4
+  - type: SpaceArtillery
+    powerChargeRate: 410
+    powerUsePassive: 310
+  - type: Actions
+  - type: RechargeBasicEntityAmmo
+    rechargeCooldown: 0.85
+  - type: BasicEntityAmmoProvider
+    proto: ShipProjectilePlasmaTrap
+    capacity: 36
+    count: 36
+  - type: RadarBlip
+    radarColor: "#73C2FB"
+    scale: 1.15
+  - type: ShipGunType
+    shipType: Energy
+  - type: ShipGunClass
+    shipClass: Medium
+
+- type: entity
+  id: WeaponShuttleEnergyPlasmaTrapT3
+  name: плазменная ловушка PT-3 «Лиса»
+  parent: BallisticArtillery
+  description: "Экспериментальная модель корабельного орудия, стреляющая плазменными ловушками. Коварное орудие, которое часто недооценивают."
+  components:
+  - type: StaticPrice
+    price: 12000
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Shuttles/laser.rsi
+    layers:
+    - state: lse-1200c
+  - type: Battery
+    maxCharge: 11500
+    startingCharge: 11500
+  - type: ExaminableBattery
+  - type: Appearance
+  - type: AmmoCounter
+  - type: AutoShootGun
+  - type: GunSignalControl
+  - type: WirelessNetworkConnection
+    range: 600
+  - type: DeviceLinkSink
+    ports:
+    - SpaceArtilleryFire
+    - Toggle
+  - type: Gun
+    fireRate: 0.55
+    projectileSpeed: 65
+    minAngle: 2.3
+    maxAngle: 7
+    angleIncrease: 1.0
+    angleDecay: 4.5
+    currentAngle: 2.6
+    shotsPerBurst: 5
+    burstCooldown: 0.08
+    selectedMode: Burst
+    availableModes:
+    - Burst
+    soundGunshot:
+      path: /Audio/_Mono/Weapons/Guns/Gunshots/ship_friendship.ogg
+  - type: BatterySelfRecharger
+    autoRecharge: true
+    autoRechargeRate: 4
+  - type: SpaceArtillery
+    powerChargeRate: 440
+    powerUsePassive: 300
+  - type: Actions
+  - type: RechargeBasicEntityAmmo
+    rechargeCooldown: 0.8
+  - type: BasicEntityAmmoProvider
+    proto: ShipProjectilePlasmaTrap
+    capacity: 42
+    count: 42
+  - type: RadarBlip
+    radarColor: "#73C2FB"
+    scale: 1.2
+  - type: ShipGunType
+    shipType: Energy
+  - type: ShipGunClass
+    shipClass: Medium

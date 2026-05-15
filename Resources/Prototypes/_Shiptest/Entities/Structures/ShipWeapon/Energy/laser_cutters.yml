@@ -1,0 +1,179 @@
+- type: entity
+  id: WeaponShuttleEnergyShotgunT1
+  name: энергетический дробовик ES-1 «Искра»
+  parent: BallisticArtillery
+  description: "Серийный магноплазменный рассеиватель. Имеет огромную область поражения, но малую дальность. Является орудием поддержки, не требующее ручной перезарядки. Часто используется гражданскими судами с малым количеством экипажа."
+  components:
+  - type: StaticPrice
+    price: 5200
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Shuttles/laser.rsi
+    layers:
+    - state: lse-1200c
+  - type: Battery
+    maxCharge: 8200
+    startingCharge: 8200
+  - type: ExaminableBattery
+  - type: Appearance
+  - type: AmmoCounter
+  - type: AutoShootGun
+  - type: GunSignalControl
+  - type: WirelessNetworkConnection
+    range: 600
+  - type: DeviceLinkSink
+    ports:
+    - SpaceArtilleryFire
+    - Toggle
+  - type: Gun
+    fireRate: 0.88
+    projectileSpeed: 74
+    minAngle: 5
+    maxAngle: 15
+    angleIncrease: 1.3
+    angleDecay: 2.9
+    currentAngle: 6
+    selectedMode: FullAuto
+    availableModes:
+    - FullAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/ship_duster.ogg
+  - type: BatterySelfRecharger
+    autoRecharge: true
+    autoRechargeRate: 4
+  - type: SpaceArtillery
+    powerChargeRate: 400
+    powerUsePassive: 305
+  - type: Actions
+  - type: RechargeBasicEntityAmmo
+    rechargeCooldown: 0.72
+  - type: BasicEntityAmmoProvider
+    proto: ShipAmmoEnergyShotgunVolleyT1
+    capacity: 38
+    count: 38
+  - type: RadarBlip
+    radarColor: "#FFD54F"
+    scale: 1.0
+  - type: ShipGunType
+    shipType: Energy
+  - type: ShipGunClass
+    shipClass: Medium
+
+- type: entity
+  id: WeaponShuttleEnergyShotgunT2
+  name: энергетический дробовик ES-2 «Зарница»
+  parent: BallisticArtillery
+  description: "Ограниченный магноплазменный рассеиватель. Имеет огромную область поражения, но малую дальность. Улучшенное орудие поддержки, не требующее ручной перезарядки. Универсальна, но менее эффективна, нежели другие типы вооружения."
+  components:
+  - type: StaticPrice
+    price: 7600
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Shuttles/laser.rsi
+    layers:
+    - state: lse-1200c
+  - type: Battery
+    maxCharge: 9600
+    startingCharge: 9600
+  - type: ExaminableBattery
+  - type: Appearance
+  - type: AmmoCounter
+  - type: AutoShootGun
+  - type: GunSignalControl
+  - type: WirelessNetworkConnection
+    range: 600
+  - type: DeviceLinkSink
+    ports:
+    - SpaceArtilleryFire
+    - Toggle
+  - type: Gun
+    fireRate: 1.0
+    projectileSpeed: 76
+    minAngle: 4.5
+    maxAngle: 14
+    angleIncrease: 1.2
+    angleDecay: 3.2
+    currentAngle: 5.5
+    selectedMode: FullAuto
+    availableModes:
+    - FullAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/ship_duster.ogg
+  - type: BatterySelfRecharger
+    autoRecharge: true
+    autoRechargeRate: 4
+  - type: SpaceArtillery
+    powerChargeRate: 430
+    powerUsePassive: 295
+  - type: Actions
+  - type: RechargeBasicEntityAmmo
+    rechargeCooldown: 0.68
+  - type: BasicEntityAmmoProvider
+    proto: ShipAmmoEnergyShotgunVolleyT2
+    capacity: 42
+    count: 42
+  - type: RadarBlip
+    radarColor: "#FFD54F"
+    scale: 1.05
+  - type: ShipGunType
+    shipType: Energy
+  - type: ShipGunClass
+    shipClass: Medium
+
+- type: entity
+  id: WeaponShuttleEnergyShotgunT3
+  name: энергетический дробовик ES-3 «Гроза»
+  parent: BallisticArtillery
+  description: "Экспериментальной магноплазменный рассеиватель, имеющий охлаждающий кожух. Отличное орудие поддержки, не требующее ручной перезарядки. Эта модель вооружения ещё не поступило на вооружение какого либо флота."
+  components:
+  - type: StaticPrice
+    price: 10400
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Shuttles/laser.rsi
+    layers:
+    - state: lse-1200c
+  - type: Battery
+    maxCharge: 11000
+    startingCharge: 11000
+  - type: ExaminableBattery
+  - type: Appearance
+  - type: AmmoCounter
+  - type: AutoShootGun
+  - type: GunSignalControl
+  - type: WirelessNetworkConnection
+    range: 600
+  - type: DeviceLinkSink
+    ports:
+    - SpaceArtilleryFire
+    - Toggle
+  - type: Gun
+    fireRate: 1.12
+    projectileSpeed: 78
+    minAngle: 4
+    maxAngle: 13
+    angleIncrease: 1.1
+    angleDecay: 3.4
+    currentAngle: 5
+    selectedMode: FullAuto
+    availableModes:
+    - FullAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/ship_duster.ogg
+  - type: BatterySelfRecharger
+    autoRecharge: true
+    autoRechargeRate: 4
+  - type: SpaceArtillery
+    powerChargeRate: 460
+    powerUsePassive: 285
+  - type: Actions
+  - type: RechargeBasicEntityAmmo
+    rechargeCooldown: 0.64
+  - type: BasicEntityAmmoProvider
+    proto: ShipAmmoEnergyShotgunVolleyT3
+    capacity: 46
+    count: 46
+  - type: RadarBlip
+    radarColor: "#FFD54F"
+    scale: 1.1
+  - type: ShipGunType
+    shipType: Energy
+  - type: ShipGunClass
+    shipClass: Medium

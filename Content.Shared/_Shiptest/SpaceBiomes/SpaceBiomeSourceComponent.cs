@@ -1,8 +1,9 @@
+using Robust.Shared.GameStates;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Shared._Shiptest.SpaceBiomes;
 
-[RegisterComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class SpaceBiomeSourceComponent : Component
 {
     /// <summary>
@@ -15,40 +16,40 @@ public sealed partial class SpaceBiomeSourceComponent : Component
     /// Base distance (in meters) at which biome swap should begin.
     /// Actual boundary is deformed by <see cref="BoundaryPoints"/>.
     /// </summary>
-    [DataField(required: true)]
+    [DataField(required: true), AutoNetworkedField]
     public int SwapDistance;
 
     /// <summary>
     /// When multiple biomes overlap, the one with the highest priority wins.
     /// </summary>
-    [DataField]
+    [DataField, AutoNetworkedField]
     public int Priority;
 
     /// <summary>
     /// Maximum amount of portable scans available for this specific biome source.
     /// </summary>
-    [DataField]
+    [DataField, AutoNetworkedField]
     public int MaxPortableScans = 15;
 
     /// <summary>
     /// Remaining amount of portable scans for this specific biome source.
     /// This is decremented by biome survey devices when scans complete.
     /// </summary>
-    [DataField]
+    [DataField, AutoNetworkedField]
     public int RemainingPortableScans = 15;
 
     /// <summary>
-    /// Server-only: boundary deformation points defining the irregular shape of this biome zone.
+    /// Boundary deformation points defining the irregular shape of this biome zone.
     /// Each value is a multiplier applied to SwapDistance at a given angle.
-    /// Generated at spawn time, never changes.
+    /// Generated at spawn time for grid cells; otherwise from prototype.
     /// </summary>
-    [ViewVariables]
+    [DataField, AutoNetworkedField]
     public float[] BoundaryPoints = Array.Empty<float>();
 
     /// <summary>
     /// Resolution of boundary points (how many angles are sampled).
     /// </summary>
-    [ViewVariables]
+    [DataField, AutoNetworkedField]
     public int BoundaryResolution;
 
     /// <summary>

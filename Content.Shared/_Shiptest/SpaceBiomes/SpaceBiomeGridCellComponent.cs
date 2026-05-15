@@ -1,3 +1,4 @@
+using Robust.Shared.GameStates;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Shared._Shiptest.SpaceBiomes;
@@ -6,7 +7,7 @@ namespace Content.Shared._Shiptest.SpaceBiomes;
 /// Represents a single cell in the 19x19 space biome grid.
 /// Each cell is a square zone of 1500x1500 meters.
 /// </summary>
-[RegisterComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class SpaceBiomeGridCellComponent : Component
 {
     /// <summary>

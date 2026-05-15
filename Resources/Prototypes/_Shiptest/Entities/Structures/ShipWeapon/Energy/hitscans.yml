@@ -1,0 +1,47 @@
+- type: hitscan
+  id: ShipHitscanLaserCutterT1
+  maxLength: 620
+  damage:
+    types:
+      Heat: 8
+  muzzleFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: muzzle_laser
+  travelFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: beam
+  impactFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: impact_laser
+
+- type: hitscan
+  id: ShipHitscanLaserCutterT2
+  maxLength: 620
+  damage:
+    types:
+      Heat: 10
+  muzzleFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: muzzle_laser
+  travelFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: beam
+  impactFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: impact_laser
+
+- type: hitscan
+  id: ShipHitscanLaserCutterT3
+  maxLength: 620
+  damage:
+    types:
+      Heat: 12
+  muzzleFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: muzzle_laser
+  travelFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: beam
+  impactFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: impact_laser
