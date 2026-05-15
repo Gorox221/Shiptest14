@@ -26,7 +26,7 @@
     - Toggle
   - type: Gun
     fireRate: 0.88
-    projectileSpeed: 74
+    projectileSpeed: 80
     minAngle: 5
     maxAngle: 15
     angleIncrease: 1.3
@@ -86,7 +86,7 @@
     - Toggle
   - type: Gun
     fireRate: 1.0
-    projectileSpeed: 76
+    projectileSpeed: 82
     minAngle: 4.5
     maxAngle: 14
     angleIncrease: 1.2
@@ -146,7 +146,7 @@
     - Toggle
   - type: Gun
     fireRate: 1.12
-    projectileSpeed: 78
+    projectileSpeed: 84
     minAngle: 4
     maxAngle: 13
     angleIncrease: 1.1

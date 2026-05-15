@@ -8,8 +8,8 @@
     ignoreWeaponGrid: true
     damage:
       types:
-        Heat: 26
-        Structural: 8
+        Heat: 18
+        Structural: 4
   - type: Sprite
     sprite: Objects/Weapons/Guns/Projectiles/magic.rsi
     layers:
@@ -23,9 +23,9 @@
   - type: ExplodeOnTrigger
   - type: Explosive
     explosionType: Default
-    totalIntensity: 34
-    intensitySlope: 7
-    maxIntensity: 18
+    totalIntensity: 22
+    intensitySlope: 5
+    maxIntensity: 12
   - type: ProjectileSpeedDecay
     stopAfterDistance: 300
   - type: TimedDespawn
@@ -54,12 +54,12 @@
     ignoreWeaponGrid: true
     damage:
       types:
-        Heat: 7
-        Structural: 1
+        Heat: 11
+        Structural: 3
   - type: Ammo
     muzzleFlash: null
   - type: TimedDespawn
-    lifetime: 5.2
+    lifetime: 7
 
 - type: entity
   id: ShipAmmoEnergyShotgunVolleyT1
@@ -86,12 +86,12 @@
     ignoreWeaponGrid: true
     damage:
       types:
-        Heat: 8
-        Structural: 1
+        Heat: 12
+        Structural: 4
   - type: Ammo
     muzzleFlash: null
   - type: TimedDespawn
-    lifetime: 5.35
+    lifetime: 7.2
 
 - type: entity
   id: ShipAmmoEnergyShotgunVolleyT2
@@ -118,12 +118,12 @@
     ignoreWeaponGrid: true
     damage:
       types:
-        Heat: 9
-        Structural: 1
+        Heat: 13
+        Structural: 4
   - type: Ammo
     muzzleFlash: null
   - type: TimedDespawn
-    lifetime: 5.5
+    lifetime: 7.4
 
 - type: entity
   id: ShipAmmoEnergyShotgunVolleyT3

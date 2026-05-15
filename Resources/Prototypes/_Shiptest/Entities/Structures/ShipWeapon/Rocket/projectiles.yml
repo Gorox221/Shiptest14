@@ -8,8 +8,8 @@
     ignoreWeaponGrid: true
     damage:
       types:
-        Structural: 95
-        Blunt: 50
+        Structural: 82
+        Blunt: 38
   - type: Sprite
     sprite: _Mono/Objects/SpaceArtillery/mini_rocket.rsi
     layers:
@@ -23,7 +23,7 @@
     requireNoGrid: true
     shape: triangle
   - type: TimedDespawn
-    lifetime: 6.5
+    lifetime: 15
   - type: PointLight
     radius: 3.2
     color: "#FFB347"
@@ -31,13 +31,13 @@
   - type: ExplodeOnTrigger
   - type: Explosive
     explosionType: Default
-    totalIntensity: 76
-    intensitySlope: 18
-    maxIntensity: 44
+    totalIntensity: 58
+    intensitySlope: 14
+    maxIntensity: 36
   - type: GatheringProjectile
   - type: TargetSeeking
     acceleration: 120
-    detectionRange: 220
+    detectionRange: 720
     scanArc: 38
     launchSpeed: 70
     maxSpeed: 160

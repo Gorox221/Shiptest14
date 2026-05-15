@@ -25,7 +25,7 @@
     - SpaceArtilleryFire
     - Toggle
   - type: Gun
-    fireRate: 5.35
+    fireRate: 5.1
     projectileSpeed: 98.51
     minAngle: 8
     maxAngle: 36
@@ -92,7 +92,7 @@
     - SpaceArtilleryFire
     - Toggle
   - type: Gun
-    fireRate: 6.9
+    fireRate: 6.5
     projectileSpeed: 98.51
     minAngle: 5.5
     maxAngle: 28
@@ -159,7 +159,7 @@
     - SpaceArtilleryFire
     - Toggle
   - type: Gun
-    fireRate: 8.0
+    fireRate: 7.0
     projectileSpeed: 98.51
     minAngle: 3.2
     maxAngle: 19

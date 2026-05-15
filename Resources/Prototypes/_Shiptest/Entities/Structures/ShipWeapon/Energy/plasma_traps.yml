@@ -156,7 +156,7 @@
     angleIncrease: 1.0
     angleDecay: 4.5
     currentAngle: 2.6
-    shotsPerBurst: 5
+    shotsPerBurst: 4
     burstCooldown: 0.08
     selectedMode: Burst
     availableModes:

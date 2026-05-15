@@ -3,7 +3,7 @@
   maxLength: 620
   damage:
     types:
-      Heat: 8
+      Heat: 20
   muzzleFlash:
     sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
     state: muzzle_laser
@@ -19,7 +19,7 @@
   maxLength: 620
   damage:
     types:
-      Heat: 10
+      Heat: 23
   muzzleFlash:
     sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
     state: muzzle_laser
@@ -35,7 +35,7 @@
   maxLength: 620
   damage:
     types:
-      Heat: 12
+      Heat: 27
   muzzleFlash:
     sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
     state: muzzle_laser

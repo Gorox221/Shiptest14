@@ -53,8 +53,7 @@
     ignoreWeaponGrid: true
     damage:
       types:
-        Structural: 6
-        Piercing: 45
+        Piercing: 58
   - type: TimedDespawn
     lifetime: 5.5833
 
@@ -73,8 +72,8 @@
     ignoreWeaponGrid: true
     damage:
       types:
-        Structural: 38
-        Piercing: 85
+        Structural: 122
+        Piercing: 28
   - type: TimedDespawn
     lifetime: 8.45
 
@@ -94,14 +93,14 @@
     color: "#19AFFF"
   - type: TravelDistanceDamage
     maxRampingDistance: 1230
-    minDamageFactor: 0.2
+    minDamageFactor: 0.25
   - type: Projectile
     ignoreWeaponGrid: true
     penetrate: true
     penetrationThreshold: 0
     damage:
       types:
-        Structural: 400
-        Piercing: 100
+        Structural: 165
+        Piercing: 58
   - type: TimedDespawn
     lifetime: 5.7929
