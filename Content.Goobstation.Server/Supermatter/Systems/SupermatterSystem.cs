@@ -27,20 +27,21 @@ using System.Text;
 using Content.Goobstation.Shared.Supermatter;
 using Content.Goobstation.Shared.Supermatter.Components;
 using Content.Goobstation.Shared.Supermatter.Systems;
-using Content.Server.AlertLevel;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Audio;
-using Content.Server.Chat.Systems;
 using Content.Server.DoAfter;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.Kitchen.Components;
 using Content.Server.Lightning;
 using Content.Server.Popups;
+using Content.Server.Radio.EntitySystems;
+using Content.Server._Shiptest.ShipAccess;
 using Content.Server.Station.Systems;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Atmos;
 using Content.Shared.Chat;
 using Content.Shared.Database;
+using Content.Shared.Radio;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
@@ -57,15 +58,16 @@ using Robust.Shared.IoC;
 using Robust.Shared.Maths;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Events;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random; // CorvaxGoob-SM-Accent-Sound
 using Robust.Shared.Timing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Content.Goobstation.Server.Supermatter.Systems;
 
 public sealed class SupermatterSystem : SharedSupermatterSystem
 {
     [Dependency] private readonly AtmosphereSystem _atmosphere = default!;
-    [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly SharedContainerSystem _container = default!;
     [Dependency] private readonly ExplosionSystem _explosion = default!;
     [Dependency] private readonly TransformSystem _xform = default!;
@@ -73,14 +75,13 @@ public sealed class SupermatterSystem : SharedSupermatterSystem
     [Dependency] private readonly IGameTiming _gameTiming = default!;
     [Dependency] private readonly AmbientSoundSystem _ambient = default!;
     [Dependency] private readonly LightningSystem _lightning = default!;
-    [Dependency] private readonly AlertLevelSystem _alert = default!;
+    [Dependency] private readonly RadioSystem _radio = default!;
     [Dependency] private readonly StationSystem _station = default!;
+    [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly DoAfterSystem _doAfter = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly ISharedAdminLogManager _adminLog = default!;
     [Dependency] private readonly IRobustRandom _rand = default!; // CorvaxGoob-SM-Accent-Sound
-
-    private DelamType _delamType = DelamType.Explosion;
 
     public override void Initialize()
     {
@@ -94,6 +95,12 @@ public sealed class SupermatterSystem : SharedSupermatterSystem
         SubscribeLocalEvent<SupermatterComponent, InteractUsingEvent>(OnItemInteract);
         SubscribeLocalEvent<SupermatterComponent, ExaminedEvent>(OnExamine);
         SubscribeLocalEvent<SupermatterComponent, SupermatterDoAfterEvent>(OnGetSliver);
+        SubscribeLocalEvent<SupermatterComponent, TransformSpeakerNameEvent>(OnRadioSpeakerName);
+    }
+
+    private void OnRadioSpeakerName(EntityUid uid, SupermatterComponent sm, TransformSpeakerNameEvent args)
+    {
+        args.VoiceName = Loc.GetString("supermatter-announcer");
     }
 
     private void OnComponentRemove(EntityUid uid, SupermatterComponent component, ComponentRemove args)
@@ -404,58 +411,27 @@ public sealed class SupermatterSystem : SharedSupermatterSystem
     private void HandleAnnouncements(EntityUid uid, SupermatterComponent sm)
     {
         var message = string.Empty;
-        var global = false;
 
         var integrity = GetIntegrity(sm).ToString("0.00");
 
         // Special cases
         if (sm.Damage < sm.DelaminationPoint && sm.Delamming)
         {
-            message = Loc.GetString("supermatter-delam-cancel", ("integrity", integrity));
+            SupermatterAnnouncement(uid, Loc.GetString("supermatter-delam-cancel", ("integrity", integrity)));
             sm.DelamAnnounced = false;
-            global = true;
+            return;
         }
+
         if (sm.Delamming && !sm.DelamAnnounced)
         {
             var sb = new StringBuilder();
-            var loc = string.Empty;
-            var alertLevel = "yellow";
-
-            switch (_delamType)
-            {
-                case DelamType.Explosion:
-                default:
-                    loc = "supermatter-delam-explosion";
-                    break;
-
-                case DelamType.Singulo:
-                    loc = "supermatter-delam-overmass";
-                    alertLevel = "delta";
-                    break;
-
-                case DelamType.Tesla:
-                    loc = "supermatter-delam-tesla";
-                    alertLevel = "delta";
-                    break;
-
-                case DelamType.Cascade:
-                    loc = "supermatter-delam-cascade";
-                    alertLevel = "delta";
-                    break;
-            }
-
-            var station = _station.GetOwningStation(uid);
-            if (station != null)
-                _alert.SetLevel((EntityUid) station, alertLevel, true, true, true, false);
-
-            sb.AppendLine(Loc.GetString(loc));
+            sb.AppendLine(Loc.GetString("supermatter-delam-explosion"));
             sb.AppendLine(Loc.GetString("supermatter-seconds-before-delam", ("seconds", sm.DelamTimer)));
 
             message = sb.ToString();
-            global = true;
             sm.DelamAnnounced = true;
 
-            SupermatterAnnouncement(uid, message, global);
+            SupermatterAnnouncement(uid, message);
             return;
         }
 
@@ -465,30 +441,41 @@ public sealed class SupermatterSystem : SharedSupermatterSystem
 
         if (sm.Damage >= sm.WarningPoint)
         {
-            message = Loc.GetString("supermatter-warning", ("integrity", integrity));
-            if (sm.Damage >= sm.EmergencyPoint)
-            {
-                message = Loc.GetString("supermatter-emergency", ("integrity", integrity));
-                global = true;
-            }
+            message = sm.Damage >= sm.EmergencyPoint
+                ? Loc.GetString("supermatter-emergency", ("integrity", integrity))
+                : Loc.GetString("supermatter-warning", ("integrity", integrity));
         }
-        SupermatterAnnouncement(uid, message, global);
+
+        if (!string.IsNullOrEmpty(message))
+            SupermatterAnnouncement(uid, message);
     }
 
     /// <summary>
-    ///     Help the SM announce something.
+    ///     Broadcasts a supermatter alert on the owning player ship radio channel.
     /// </summary>
-    /// <param name="global">If true, does the station announcement.</param>
-    /// <param name="customSender">If true, sends the announcement from Central Command.</param>
-    public void SupermatterAnnouncement(EntityUid uid, string message, bool global = false, string? customSender = null)
+    public void SupermatterAnnouncement(EntityUid uid, string message)
     {
-        if (global)
-        {
-            var sender = customSender != null ? customSender : Loc.GetString("supermatter-announcer");
-            _chat.DispatchStationAnnouncement(uid, message, sender, colorOverride: Color.Yellow);
+        if (string.IsNullOrWhiteSpace(message))
             return;
-        }
-        _chat.TrySendInGameICMessage(uid, message, InGameICChatType.Speak, hideChat: false, checkRadioPrefix: true);
+
+        if (!TryGetShipRadioChannel(uid, out var channel))
+            channel = _proto.Index<RadioChannelPrototype>("Engineering");
+
+        _radio.SendRadioMessage(uid, message, channel, uid, escapeMarkup: false);
+    }
+
+    private bool TryGetShipRadioChannel(EntityUid uid, [NotNullWhen(true)] out RadioChannelPrototype? channel)
+    {
+        channel = null;
+
+        if (_station.GetOwningStation(uid) is not { } station)
+            return false;
+
+        if (!TryComp<PlayerShipHullAccessComponent>(station, out var hull)
+            || string.IsNullOrEmpty(hull.RadioChannelProtoId))
+            return false;
+
+        return _proto.TryIndex(hull.RadioChannelProtoId, out channel);
     }
 
     /// <summary>
@@ -500,30 +487,6 @@ public sealed class SupermatterSystem : SharedSupermatterSystem
         integrity = (float) Math.Round(100 - integrity * 100, 2);
         integrity = integrity < 0 ? 0 : integrity;
         return integrity;
-    }
-
-    /// <summary>
-    ///     Decide on how to delaminate.
-    /// </summary>
-    public DelamType ChooseDelamType(EntityUid uid, SupermatterComponent sm)
-    {
-        var mix = _atmosphere.GetContainingMixture(uid, true, true);
-
-        if (mix is { })
-        {
-            // var absorbedGas = mix.Remove(sm.GasEfficiency * mix.TotalMoles);
-            var moles = mix.TotalMoles;
-
-            if (moles >= sm.MolePenaltyThreshold)
-                return DelamType.Singulo;
-        }
-
-        if (sm.Power >= sm.PowerPenaltyThreshold)
-            return DelamType.Tesla;
-
-        // TODO: add resonance cascade when there's crazy conditions, or a destabilizing crystal :godo:
-
-        return DelamType.Explosion;
     }
 
     // CorvaxGoob-SM-Accent-Sounds-Start
@@ -570,10 +533,6 @@ public sealed class SupermatterSystem : SharedSupermatterSystem
     /// </summary>
     private void HandleDelamination(EntityUid uid, SupermatterComponent sm)
     {
-        var xform = Transform(uid);
-
-        _delamType = ChooseDelamType(uid, sm);
-
         if (!sm.Delamming)
         {
             sm.Delamming = true;
@@ -590,25 +549,7 @@ public sealed class SupermatterSystem : SharedSupermatterSystem
         if (sm.DelamTimer > sm.DelamTimerAccumulator)
             return;
 
-        switch (_delamType)
-        {
-            case DelamType.Explosion:
-            default:
-                _explosion.TriggerExplosive(uid);
-                break;
-
-            case DelamType.Singulo:
-                Spawn(sm.SingularityPrototypeId, xform.Coordinates);
-                break;
-
-            case DelamType.Tesla:
-                Spawn(sm.TeslaPrototypeId, xform.Coordinates);
-                break;
-
-            case DelamType.Cascade:
-                Spawn(sm.SupermatterKudzuPrototypeId, xform.Coordinates);
-                break;
-        }
+        _explosion.TriggerExplosive(uid);
     }
 
     private void HandleSoundLoop(EntityUid uid, SupermatterComponent sm)
@@ -738,7 +679,7 @@ public sealed class SupermatterSystem : SharedSupermatterSystem
         sm.SliverRemoved = true;
         
         var integrity = GetIntegrity(sm).ToString("0.00");
-        SupermatterAnnouncement(uid, Loc.GetString("supermatter-announcement-cc-tamper", ("integrity", integrity)), true, "Central Command");
+        SupermatterAnnouncement(uid, Loc.GetString("supermatter-announcement-cc-tamper", ("integrity", integrity)));
 
         Spawn(sm.SliverPrototypeId, _transform.GetMapCoordinates(args.User));
 
