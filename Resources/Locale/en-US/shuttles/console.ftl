@@ -67,3 +67,6 @@ shuttle-console-docks-label = Docks
 
 shuttle-console-undock-fail = Undocking failed
 shuttle-console-dock-fail = Docking failed
+shuttle-console-round-preparation-active = Shuttle control calibration in progress. Console access is temporarily locked.
+
+round-preparation-calibration-announcement = Ship systems calibration complete. Docking gateways and shuttle controls are now fully operational.

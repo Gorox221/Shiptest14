@@ -49,3 +49,6 @@ shuttle-console-dock = Пристыковать
 shuttle-console-docks-label = Стыковочные порты
 shuttle-console-undock-fail = Не удалось отстыковаться
 shuttle-console-dock-fail = Не удалось пристыковаться
+shuttle-console-round-preparation-active = Идет предстартовая калибровка шаттла. Доступ к консоли временно заблокирован.
+
+round-preparation-calibration-announcement = Калибровка систем корабля завершена. Стыковочные шлюзы и управление шаттлами полностью восстановлены.

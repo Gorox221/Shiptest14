@@ -117,6 +117,7 @@ using Content.Server.Power.EntitySystems;
 using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Events;
 using Content.Server.Station.Systems;
+using Content.Server._Shiptest.GameTicking;
 using Content.Shared._NF.Shuttles.Events;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Alert;
@@ -162,6 +163,7 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
     [Dependency] private readonly SharedContentEyeSystem _eyeSystem = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly RoundPreparationSystem _roundPreparation = default!;
 
     [Dependency] private readonly _Lavaland.Shuttles.Systems.DockingConsoleSystem _dockingConsole = default!; // Lavaland Change: FTL
     [Dependency] private readonly Content.Server._Shiptest.SpaceBiomes.SpaceBiomeSystem _biomeSystem = default!;
@@ -308,6 +310,12 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
 
     private bool TryPilot(EntityUid user, EntityUid uid)
     {
+        if (_roundPreparation.IsPreparationActive)
+        {
+            _popup.PopupEntity(Loc.GetString("shuttle-console-round-preparation-active"), user, user);
+            return false;
+        }
+
         if (!_tags.HasTag(user, CanPilotTag) ||
             !TryComp<ShuttleConsoleComponent>(uid, out var component) ||
             !this.IsPowered(uid, EntityManager) ||
