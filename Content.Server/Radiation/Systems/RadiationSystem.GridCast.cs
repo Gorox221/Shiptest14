@@ -40,6 +40,7 @@ public partial class RadiationSystem
         public TransformComponent Transform => Entity.Comp2;
 
         // goobstation
+        public float FlatDistance => Entity.Comp1.FlatDistance;
         public float TerminalDecaySlope => Entity.Comp1.TerminalDecaySlope;
         public float TerminalDecayDistance => Entity.Comp1.TerminalDecayDistance;
     }
@@ -161,12 +162,18 @@ public partial class RadiationSystem
         if (TryComp(source.Entity.Owner, out EventHorizonComponent? horizon)) // if we have a horizon emit radiation from the horizon,
             dist = Math.Max(dist - horizon.Radius, 0.5f);
 
+        // Keep full intensity in an initial flat zone, then apply the existing decay
+        // using shifted distance to avoid a jump at the boundary.
+        var effectiveDist = dist > source.FlatDistance
+            ? dist - source.FlatDistance + 1f
+            : 1f;
+
         // Ray enters terminal decay if the distance between source->receiver >TerminalDecayDistance.
         // Decays at an additional linear rate of TerminalDecaySlope rads per tile past TerminalDecayDistance ontop of the existing hyperbolic function.
         // Hyperbolic function
-        var rads = source.Intensity / (dist)
+        var rads = source.Intensity / effectiveDist
         // Terminal decay function
-        - (dist - source.TerminalDecayDistance > 0 ? (source.TerminalDecaySlope * (dist - source.TerminalDecayDistance)) : 0);
+        - (effectiveDist - source.TerminalDecayDistance > 0 ? (source.TerminalDecaySlope * (effectiveDist - source.TerminalDecayDistance)) : 0);
 
         if (rads < 0.01)
             return null;

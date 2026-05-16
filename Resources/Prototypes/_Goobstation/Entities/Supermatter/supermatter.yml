@@ -30,6 +30,7 @@
           - Body
           - Item
     - type: RadiationSource
+      flatDistance: 3
     - type: AmbientSound
       range: 5
       volume: 0

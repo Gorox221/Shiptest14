@@ -23,6 +23,15 @@ public sealed partial class RadiationSourceComponent : Component
     public float Intensity = 1;
 
     /// <summary>
+    /// Distance in tiles where radiation does not decay with distance.
+    /// When distance exceeds this value, normal decay applies using a shifted distance,
+    /// preserving continuity at the boundary.
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite)]
+    [DataField("flatDistance")]
+    public float FlatDistance = 0f;
+
+    /// <summary>
     ///     GOOBSTATION
     ///     Defines how fast radiation rays will loose intensity
     ///     over distance if the ray enters terminal decay. The bigger the value, faster the radiation source

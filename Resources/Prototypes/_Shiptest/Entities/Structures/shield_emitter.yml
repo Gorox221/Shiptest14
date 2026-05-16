@@ -34,12 +34,12 @@
   - type: Machine
     board: ShieldEmitterT1MachineCircuitboard
   - type: ApcPowerReceiver
-    powerLoad: 20000
+    powerLoad: 650000
   - type: ShipShieldEmitter
     damageLimit: 1000
     healPerSecond: 20
     damageExp: 1.0
-    powerDraw: 20000
+    powerDraw: 650000
     unpoweredBonus: 2.5
     damageOverloadTimePunishment: 60
     shieldTexture: /Textures/_Crescent/ShipShields/shieldblue.png
