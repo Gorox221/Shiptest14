@@ -1,3 +1,4 @@
+using System.Globalization;
 using Content.Client.Stylesheets;
 using Content.Client.UserInterface.Controls;
 using Content.Shared._FarHorizons.Power.Generation.FissionGenerator;
@@ -67,8 +68,6 @@ public sealed partial class TurbineWindow : FancyWindow
     private EntityUid _monitor;
 
     private bool _suppressSliderEvents;
-    private bool _suppressStatorUpdate;
-    private bool _suppressFlowUpdate;
     #endregion
 
     #region Events
@@ -86,51 +85,75 @@ public sealed partial class TurbineWindow : FancyWindow
         InitRPMMeter();
 
         // Handle flow rate
-        TurbineFlowRateLabel.OnFocusEnter += _ => _suppressFlowUpdate = true;
-        TurbineFlowRateLabel.OnFocusExit += _ => FlowTextChanged();
-        TurbineFlowRateLabel.OnTextEntered += _ => FlowTextChanged(true);
+        TurbineFlowRateLabel.OnFocusExit += _ => CommitFlowRateText();
+        TurbineFlowRateLabel.OnTextEntered += _ => CommitFlowRateText();
 
         TurbineFlowRateSlider.OnValueChanged += _ =>
         {
             if (!_suppressSliderEvents)
                 TurbineFlowRateChanged?.Invoke(TurbineFlowRateSlider.Value);
         };
-        FlowRateDecrease.OnPressed += _ => TurbineFlowRateChanged?.Invoke(TurbineFlowRateSlider.Value - 100);
-        FlowRateIncrease.OnPressed += _ => TurbineFlowRateChanged?.Invoke(TurbineFlowRateSlider.Value + 100);
+        FlowRateDecrease.OnPressed += _ => ApplyFlowRate(TurbineFlowRateSlider.Value - 100);
+        FlowRateIncrease.OnPressed += _ => ApplyFlowRate(TurbineFlowRateSlider.Value + 100);
 
         // Handle stator load
-        TurbineStatorLoadLabel.OnFocusEnter += _ => _suppressStatorUpdate = true;
-        TurbineStatorLoadLabel.OnFocusExit += _ => StatorTextChanged();
-        TurbineStatorLoadLabel.OnTextEntered += _ => StatorTextChanged(true);
+        TurbineStatorLoadLabel.OnFocusExit += _ => CommitStatorLoadText();
+        TurbineStatorLoadLabel.OnTextEntered += _ => CommitStatorLoadText();
 
         TurbineStatorLoadSlider.OnValueChanged += _ =>
         {
             if (!_suppressSliderEvents)
                 TurbineStatorLoadChanged?.Invoke(TurbineStatorLoadSlider.Value);
         };
-        StatorLoadDecreaseLarge.OnPressed += _ => TurbineStatorLoadChanged?.Invoke(TurbineStatorLoadSlider.Value - 1000);
-        StatorLoadDecrease.OnPressed += _ => TurbineStatorLoadChanged?.Invoke(TurbineStatorLoadSlider.Value - 100);
-        StatorLoadIncrease.OnPressed += _ => TurbineStatorLoadChanged?.Invoke(TurbineStatorLoadSlider.Value + 100);
-        StatorLoadIncreaseLarge.OnPressed += _ => TurbineStatorLoadChanged?.Invoke(TurbineStatorLoadSlider.Value + 1000);
+        StatorLoadDecreaseLarge.OnPressed += _ => ApplyStatorLoad(TurbineStatorLoadSlider.Value - 1000);
+        StatorLoadDecrease.OnPressed += _ => ApplyStatorLoad(TurbineStatorLoadSlider.Value - 100);
+        StatorLoadIncrease.OnPressed += _ => ApplyStatorLoad(TurbineStatorLoadSlider.Value + 100);
+        StatorLoadIncreaseLarge.OnPressed += _ => ApplyStatorLoad(TurbineStatorLoadSlider.Value + 1000);
 
         CTabContainer.SetTabTitle(0, Loc.GetString("comp-turbine-ui-tab-main"));
         CTabContainer.SetTabTitle(1, Loc.GetString("comp-turbine-ui-tab-parts"));
+    }
 
-        return;
+    private void CommitFlowRateText()
+    {
+        if (!TryParseInput(TurbineFlowRateLabel.Text, out var num))
+            return;
 
-        void FlowTextChanged(bool suppress = false)
-        {
-            if (float.TryParse(TurbineFlowRateLabel.Text, out var num))
-                TurbineFlowRateChanged?.Invoke(num);
-            _suppressFlowUpdate = suppress;
-        }
+        ApplyFlowRate(num);
+    }
 
-        void StatorTextChanged(bool suppress = false)
-        {
-            if (float.TryParse(TurbineStatorLoadLabel.Text, out var num))
-                TurbineStatorLoadChanged?.Invoke(num);
-            _suppressStatorUpdate = suppress;
-        }
+    private void CommitStatorLoadText()
+    {
+        if (!TryParseInput(TurbineStatorLoadLabel.Text, out var num))
+            return;
+
+        ApplyStatorLoad(num);
+    }
+
+    private void ApplyFlowRate(float value)
+    {
+        var clamped = Math.Clamp(value, TurbineFlowRateSlider.MinValue, TurbineFlowRateSlider.MaxValue);
+        _suppressSliderEvents = true;
+        TurbineFlowRateSlider.Value = clamped;
+        TurbineFlowRateLabel.Text = Math.Round(clamped).ToString(CultureInfo.InvariantCulture);
+        _suppressSliderEvents = false;
+        TurbineFlowRateChanged?.Invoke(clamped);
+    }
+
+    private void ApplyStatorLoad(float value)
+    {
+        var clamped = Math.Clamp(value, TurbineStatorLoadSlider.MinValue, TurbineStatorLoadSlider.MaxValue);
+        _suppressSliderEvents = true;
+        TurbineStatorLoadSlider.Value = clamped;
+        TurbineStatorLoadLabel.Text = Math.Round(clamped).ToString(CultureInfo.InvariantCulture);
+        _suppressSliderEvents = false;
+        TurbineStatorLoadChanged?.Invoke(clamped);
+    }
+
+    private static bool TryParseInput(string text, out float value)
+    {
+        return float.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out value)
+            || float.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out value);
     }
 
     #region Graphics
@@ -184,10 +207,11 @@ public sealed partial class TurbineWindow : FancyWindow
     {
         UpdateIndicators(msg);
 
-        if(!_suppressFlowUpdate)
-            TurbineFlowRateLabel.Text = Math.Round(msg.FlowRate).ToString();
-        if(!_suppressStatorUpdate)
-            TurbineStatorLoadLabel.Text = Math.Round(msg.StatorLoad).ToString();
+        if (!TurbineFlowRateLabel.HasKeyboardFocus())
+            TurbineFlowRateLabel.Text = Math.Round(msg.FlowRate).ToString(CultureInfo.InvariantCulture);
+
+        if (!TurbineStatorLoadLabel.HasKeyboardFocus())
+            TurbineStatorLoadLabel.Text = Math.Round(msg.StatorLoad).ToString(CultureInfo.InvariantCulture);
 
         var locktarget = _isMonitor ? _monitor : _turbine;
         Inputs.Visible = !_lock.IsLocked(locktarget);
@@ -208,9 +232,11 @@ public sealed partial class TurbineWindow : FancyWindow
         BladeInfoIntegrity.Text = Math.Round(msg.Health * 100 / msg.HealthMax).ToString() + "%";
         BladeInfoStress.Text = Math.Round(msg.RPM * 100 / (msg.BestRPM * 1.2)).ToString() + "%";
 
-        StatorInfoPotential.Text = Loc.GetString("comp-turbine-ui-power", ("power", msg.PowerGeneration));
-        StatorInfoSupply.Text = Loc.GetString("comp-turbine-ui-power", ("power", msg.PowerSupply));
+        StatorInfoPotential.Text = FormatPower(msg.PowerGeneration);
+        StatorInfoSupply.Text = FormatPower(msg.PowerSupply);
     }
+
+    private static string FormatPower(float power) => Loc.GetString("battery-menu-power-value", ("value", power));
 
     private void UpdateIndicators(TurbineBuiState msg)
     {

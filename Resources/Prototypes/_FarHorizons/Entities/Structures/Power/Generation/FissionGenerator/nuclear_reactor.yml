@@ -146,7 +146,9 @@
   #- type: AccessReader # You got a permit for that meltdown?
   #  access: [["Engineering"]]
   - type: Lock
-    unlockOnClick: false
+    locked: false
+    useAccess: false
+    unlockOnClick: true
   #- type: WarpPoint
   #  location: Nuclear Reactor
   #  blacklist:

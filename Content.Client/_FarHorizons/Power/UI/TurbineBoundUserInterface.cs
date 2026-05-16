@@ -11,7 +11,7 @@ namespace Content.Client._FarHorizons.Power.UI;
 /// Initializes a <see cref="TurbineWindow"/> and updates it when new server messages are received.
 /// </summary>
 [UsedImplicitly]
-public sealed class TurbineBoundUserInterface : BoundUserInterface, IBuiPreTickUpdate
+public sealed class TurbineBoundUserInterface : BoundUserInterface
 {
     [Dependency] private readonly IClientGameTiming _gameTiming = null!;
     [Dependency] private readonly IEntityManager _entityManager = null!;
@@ -20,8 +20,6 @@ public sealed class TurbineBoundUserInterface : BoundUserInterface, IBuiPreTickU
     private TurbineWindow? _window;
 
     private BuiPredictionState? _pred;
-    private InputCoalescer<float> _flowRateCoalescer;
-    private InputCoalescer<float> _statorLoadCoalescer;
 
     public TurbineBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
     {
@@ -46,18 +44,13 @@ public sealed class TurbineBoundUserInterface : BoundUserInterface, IBuiPreTickU
         else
             _window.SetEntity(Owner);
 
-        _window.TurbineFlowRateChanged += val => _flowRateCoalescer.Set(val);
-        _window.TurbineStatorLoadChanged += val => _statorLoadCoalescer.Set(val);
+        _window.TurbineFlowRateChanged += val =>
+            _pred!.SendMessage(new TurbineChangeFlowRateMessage(val));
+
+        _window.TurbineStatorLoadChanged += val =>
+            _pred!.SendMessage(new TurbineChangeStatorLoadMessage(val));
+
         Update();
-    }
-
-    void IBuiPreTickUpdate.PreTickUpdate()
-    {
-        if (_flowRateCoalescer.CheckIsModified(out var flowRateValue))
-            _pred!.SendMessage(new TurbineChangeFlowRateMessage(flowRateValue));
-
-        if (_statorLoadCoalescer.CheckIsModified(out var statorLoadValue))
-            _pred!.SendMessage(new TurbineChangeStatorLoadMessage(statorLoadValue));
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)

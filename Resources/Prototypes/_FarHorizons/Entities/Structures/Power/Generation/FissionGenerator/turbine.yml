@@ -98,7 +98,9 @@
   #- type: AccessReader # Keeps some random tider from blowing up the turbine # mono - comment out
   #  access: [["Engineering"]]
   - type: Lock
-    unlockOnClick: false
+    locked: false
+    useAccess: false
+    unlockOnClick: true
   - type: GuideHelp
     guides:
     - NuclearReactor
