@@ -54,12 +54,12 @@
   - type: Machine
     board: ShieldEmitterT2MachineCircuitboard
   - type: ApcPowerReceiver
-    powerLoad: 40000
+    powerLoad: 1300000
   - type: ShipShieldEmitter
     damageLimit: 2500
     healPerSecond: 25
     damageExp: 1.0
-    powerDraw: 40000
+    powerDraw: 1300000
     unpoweredBonus: 2.5
     damageOverloadTimePunishment: 60
     shieldTexture: /Textures/_Crescent/ShipShields/shieldpurple.png
@@ -74,12 +74,12 @@
   - type: Machine
     board: ShieldEmitterT3MachineCircuitboard
   - type: ApcPowerReceiver
-    powerLoad: 80000
+    powerLoad: 2600000
   - type: ShipShieldEmitter
     damageLimit: 6000
     healPerSecond: 25
     damageExp: 1.0
-    powerDraw: 80000
+    powerDraw: 2600000
     unpoweredBonus: 2.5
     damageOverloadTimePunishment: 60
     shieldTexture: /Textures/_Crescent/ShipShields/shieldgreen.png
@@ -94,12 +94,12 @@
   - type: Machine
     board: ShieldEmitterT4MachineCircuitboard
   - type: ApcPowerReceiver
-    powerLoad: 160000
+    powerLoad: 5200000
   - type: ShipShieldEmitter
     damageLimit: 13000
     healPerSecond: 25
     damageExp: 1.0
-    powerDraw: 160000
+    powerDraw: 5200000
     unpoweredBonus: 2.5
     damageOverloadTimePunishment: 60
     shieldTexture: /Textures/_Crescent/ShipShields/shieldred.png
@@ -114,12 +114,12 @@
   - type: Machine
     board: ShieldEmitterT5MachineCircuitboard
   - type: ApcPowerReceiver
-    powerLoad: 320000
+    powerLoad: 10400000
   - type: ShipShieldEmitter
     damageLimit: 25000
     healPerSecond: 25
     damageExp: 1.0
-    powerDraw: 320000
+    powerDraw: 10400000
     unpoweredBonus: 2.5
     damageOverloadTimePunishment: 60
     shieldTexture: /Textures/_Crescent/ShipShields/shieldyellow.png
