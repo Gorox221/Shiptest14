@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 AJCM-git <60196617+AJCM-git@users.noreply.github.com>
+﻿# SPDX-FileCopyrightText: 2023 AJCM-git <60196617+AJCM-git@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2023 Aru Moon <anton17082003@gmail.com>
 # SPDX-FileCopyrightText: 2023 ElectroJr <leonsfriedrich@gmail.com>
 # SPDX-FileCopyrightText: 2023 Julian Giebel <juliangiebel@live.de>
@@ -331,10 +331,23 @@
   - PortableGenerator
   - AME
   - SingularityTeslaEngine
+  - NuclearReactor
   - TEG
   - RTG
   - SolarPanels
   - Supermatter # Goobstation
+
+- type: guideEntry
+  id: NuclearReactor
+  name: guide-entry-nuclear-reactor
+  text: "/ServerInfo/_FarHorizons/Guidebook/Engineering/NuclearReactor.xml"
+  children:
+  - NuclearMaterials
+
+- type: guideEntry
+  id: NuclearMaterials
+  name: guide-entry-nuclear-materials
+  text: "/ServerInfo/_FarHorizons/Guidebook/Engineering/NuclearMaterials.xml"
 
 - type: guideEntry
   id: AME
