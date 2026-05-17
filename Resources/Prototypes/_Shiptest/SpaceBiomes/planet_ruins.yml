@@ -1,0 +1,79 @@
+- type: lavalandDungeonRuin
+  id: ShiptestDungeonRuin5x5
+  boundary: 5,5
+  spawnedMarker: LavalandInteriorRoomMarker
+  priority: 0
+
+- type: lavalandDungeonRuin
+  id: ShiptestDungeonRuin7x7
+  boundary: 7,7
+  spawnedMarker: LavalandInteriorRoomMarker
+  priority: 1
+
+- type: lavalandGridRuin
+  id: ShiptestBeachBiodomeRuin
+  name: lavaland-ruin-biodome
+  path: /Maps/_Lavaland/Lavaland/ruin_beach_biodome.yml
+  priority: 1
+  patchToPlanet: false
+
+- type: lavalandGridRuin
+  id: ShiptestSandOutpostRuin
+  name: lavaland-ruin-shelter
+  path: /Maps/_Lavaland/Lavaland/ruin_mining_outpost.yml
+  priority: 1
+  patchToPlanet: false
+
+- type: lavalandGridRuin
+  id: ShiptestPlasmaLabRuin
+  name: lavaland-ruin-laboratory
+  path: /Maps/_Lavaland/Lavaland/ruin_ratvar.yml
+  priority: 1
+  patchToPlanet: false
+
+- type: lavalandGridRuin
+  id: ShiptestIceBiodomeRuin
+  name: lavaland-ruin-biodome
+  path: /Maps/_Lavaland/Lavaland/ruin_snow_biodome.yml
+  priority: 1
+  patchToPlanet: false
+
+- type: lavalandRuinPool
+  id: ShiptestBeachPlanetRuins
+  ruinDistance: 22
+  maxDistance: 220
+  gridRuins:
+    ShiptestBeachBiodomeRuin: 1
+  dungeonRuins:
+    ShiptestDungeonRuin5x5: 6
+    ShiptestDungeonRuin7x7: 2
+
+- type: lavalandRuinPool
+  id: ShiptestSandPlanetRuins
+  ruinDistance: 22
+  maxDistance: 220
+  gridRuins:
+    ShiptestSandOutpostRuin: 1
+  dungeonRuins:
+    ShiptestDungeonRuin5x5: 6
+    ShiptestDungeonRuin7x7: 2
+
+- type: lavalandRuinPool
+  id: ShiptestPlasmaPlanetRuins
+  ruinDistance: 24
+  maxDistance: 240
+  gridRuins:
+    ShiptestPlasmaLabRuin: 1
+  dungeonRuins:
+    ShiptestDungeonRuin5x5: 8
+    ShiptestDungeonRuin7x7: 3
+
+- type: lavalandRuinPool
+  id: ShiptestIcePlanetRuins
+  ruinDistance: 22
+  maxDistance: 220
+  gridRuins:
+    ShiptestIceBiodomeRuin: 1
+  dungeonRuins:
+    ShiptestDungeonRuin5x5: 6
+    ShiptestDungeonRuin7x7: 2

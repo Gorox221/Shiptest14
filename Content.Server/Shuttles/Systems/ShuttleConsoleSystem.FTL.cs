@@ -45,8 +45,10 @@
 
 using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Events;
+using Content.Shared._Shiptest.SpaceBiomes.Components;
 using Content.Shared.Shuttles.Events;
 using Content.Shared.Shuttles.UI.MapObjects;
+using System.Numerics;
 using Robust.Shared.Map;
 using Robust.Shared.Physics.Components;
 
@@ -85,11 +87,23 @@ public sealed partial class ShuttleConsoleSystem
             return;
         }
 
-        var nCoordinates = new NetCoordinates(GetNetEntity(targetXform.ParentUid), targetXform.LocalPosition);
-        if (targetXform.ParentUid == EntityUid.Invalid)
+        EntityUid targetEntity = targetXform.ParentUid;
+        var targetPosition = targetXform.LocalPosition;
+
+        if (TryComp<SpaceTravelPlanetBeaconComponent>(beaconEnt, out var planetBeacon) &&
+            planetBeacon.DestinationMap != EntityUid.Invalid &&
+            Exists(planetBeacon.DestinationMap))
         {
-            nCoordinates = new NetCoordinates(GetNetEntity(beaconEnt), targetXform.LocalPosition);
+            targetEntity = planetBeacon.DestinationMap;
+            targetPosition = _transform.GetWorldPosition(targetXform);
         }
+        else if (targetEntity == EntityUid.Invalid)
+        {
+            targetEntity = beaconEnt;
+            targetPosition = targetXform.LocalPosition;
+        }
+
+        var nCoordinates = new NetCoordinates(GetNetEntity(targetEntity), targetPosition);
 
         // Check target exists
         if (!_shuttle.CanFTLBeacon(nCoordinates))
@@ -98,9 +112,10 @@ public sealed partial class ShuttleConsoleSystem
         }
 
         var angle = args.Angle.Reduced();
-        var targetCoordinates = new EntityCoordinates(targetXform.MapUid!.Value, _transform.GetWorldPosition(targetXform));
+        var targetCoordinates = new EntityCoordinates(targetEntity, targetPosition);
+        var targetMap = _transform.GetMapId(targetCoordinates);
 
-        ConsoleFTL(ent, targetCoordinates, angle, targetXform.MapID);
+        ConsoleFTL(ent, targetCoordinates, angle, targetMap, beaconEnt);
     }
 
     private void OnPositionFTLMessage(Entity<ShuttleConsoleComponent> entity, ref ShuttleConsoleFTLPositionMessage args)
@@ -115,7 +130,7 @@ public sealed partial class ShuttleConsoleSystem
 
         var targetCoordinates = new EntityCoordinates(mapUid, args.Coordinates.Position);
         var angle = args.Angle.Reduced();
-        ConsoleFTL(entity, targetCoordinates, angle, args.Coordinates.MapId);
+        ConsoleFTL(entity, targetCoordinates, angle, args.Coordinates.MapId, null);
     }
 
     private void GetBeacons(ref List<ShuttleBeaconObject>? beacons)
@@ -154,7 +169,7 @@ public sealed partial class ShuttleConsoleSystem
     /// <summary>
     /// Handles shuttle console FTLs.
     /// </summary>
-    private void ConsoleFTL(Entity<ShuttleConsoleComponent> ent, EntityCoordinates targetCoordinates, Angle targetAngle, MapId targetMap)
+    private void ConsoleFTL(Entity<ShuttleConsoleComponent> ent, EntityCoordinates targetCoordinates, Angle targetAngle, MapId targetMap, EntityUid? beaconUid)
     {
         var consoleUid = GetDroneConsole(ent.Owner);
 
@@ -169,6 +184,26 @@ public sealed partial class ShuttleConsoleSystem
         if (shuttleComp.Enabled == false)
             return;
 
+        List<ShuttleExclusionObject>? exclusions = null;
+        GetExclusions(ref exclusions);
+
+        if (beaconUid is { } beacon &&
+            TryComp<SpaceTravelPlanetBeaconComponent>(beacon, out var planetBeacon))
+        {
+            if (!_shuttle.TryFindNearbyFTLFree(
+                    shuttleUid.Value,
+                    targetCoordinates,
+                    targetAngle,
+                    exclusions,
+                    planetBeacon.ArrivalMinOffset,
+                    planetBeacon.ArrivalSearchRadius,
+                    planetBeacon.ArrivalSearchStep,
+                    out var nearby))
+                return;
+
+            targetCoordinates = nearby;
+        }
+
         // Check shuttle can even FTL
         if (!_shuttle.CanFTL(shuttleUid.Value, out var reason))
         {
@@ -181,9 +216,6 @@ public sealed partial class ShuttleConsoleSystem
         {
             return;
         }
-
-        List<ShuttleExclusionObject>? exclusions = null;
-        GetExclusions(ref exclusions);
 
         if (!_shuttle.FTLFree(shuttleUid.Value, targetCoordinates, targetAngle, exclusions))
         {

@@ -134,6 +134,15 @@ public sealed class RoundPreparationSystem : EntitySystem
         ForceAllDockBolts();
     }
 
+    public bool TrySkipPreparation()
+    {
+        if (!_isPreparationActive)
+            return false;
+
+        DisablePreparation(notify: true);
+        return true;
+    }
+
     private void DisablePreparation(bool notify)
     {
         if (!_isPreparationActive && _forcedBolts.Count == 0)

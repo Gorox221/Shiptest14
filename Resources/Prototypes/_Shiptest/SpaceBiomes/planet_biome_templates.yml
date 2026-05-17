@@ -1,0 +1,36 @@
+- type: biomeTemplate
+  id: BeachPlanet
+  layers:
+    - !type:BiomeMetaLayer
+      template: Grasslands
+      threshold: -1
+    - !type:BiomeMetaLayer
+      template: LowDesert
+      threshold: 0.4
+      noise:
+        frequency: 0.004
+        noiseType: OpenSimplex2
+        fractalType: FBm
+        octaves: 2
+        lacunarity: 2
+
+- type: biomeTemplate
+  id: SandPlanet
+  layers:
+    - !type:BiomeMetaLayer
+      template: LowDesert
+      threshold: -1
+
+- type: biomeTemplate
+  id: PlasmaGiantPlanet
+  layers:
+    - !type:BiomeMetaLayer
+      template: Lava
+      threshold: -1
+
+- type: biomeTemplate
+  id: IcePlanet
+  layers:
+    - !type:BiomeMetaLayer
+      template: Snow
+      threshold: -1

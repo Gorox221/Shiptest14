@@ -20,6 +20,7 @@ using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Shuttles.UI.MapObjects;
 using Content.Shared.Whitelist;
+using System.Numerics;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
@@ -273,6 +274,51 @@ public abstract partial class SharedShuttleSystem : EntitySystem
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Attempts to find a valid nearby FTL arrival point around the requested center.
+    /// Useful for destination beacons where direct center arrival is occupied.
+    /// </summary>
+    public bool TryFindNearbyFTLFree(
+        EntityUid shuttleUid,
+        EntityCoordinates center,
+        Angle angle,
+        List<ShuttleExclusionObject>? exclusionZones,
+        float minOffset,
+        float maxRadius,
+        float step,
+        out EntityCoordinates chosen)
+    {
+        if (FTLFree(shuttleUid, center, angle, exclusionZones))
+        {
+            chosen = center;
+            return true;
+        }
+
+        minOffset = Math.Max(0f, minOffset);
+        maxRadius = Math.Max(minOffset, maxRadius);
+        step = Math.Max(8f, step);
+
+        for (var radius = minOffset; radius <= maxRadius; radius += step)
+        {
+            var samples = Math.Max(8, (int) MathF.Ceiling(MathF.Tau * radius / step));
+            for (var i = 0; i < samples; i++)
+            {
+                var theta = MathF.Tau * i / samples;
+                var offset = new Vector2(MathF.Cos(theta), MathF.Sin(theta)) * radius;
+                var candidate = new EntityCoordinates(center.EntityId, center.Position + offset);
+
+                if (!FTLFree(shuttleUid, candidate, angle, exclusionZones))
+                    continue;
+
+                chosen = candidate;
+                return true;
+            }
+        }
+
+        chosen = default;
+        return false;
     }
 }
 
