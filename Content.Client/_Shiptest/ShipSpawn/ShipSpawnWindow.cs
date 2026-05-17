@@ -12,16 +12,18 @@ namespace Content.Client._Shiptest.ShipSpawn;
 public sealed class ShipSpawnWindow : DefaultWindow
 {
     private readonly IPrototypeManager _proto;
-    private readonly Action<ProtoId<PlayerShipFactionPrototype>, ProtoId<PlayerShipBlueprintPrototype>> _onConfirm;
+    private readonly Action<ProtoId<PlayerShipFactionPrototype>, ProtoId<PlayerShipBlueprintPrototype>, bool, string?> _onConfirm;
     private readonly IReadOnlyCollection<string> _unavailableBlueprints;
     private readonly OptionButton _factionOption = new();
     private readonly OptionButton _shipOption = new();
+    private readonly CheckBox _closedShipCheck = new();
+    private readonly LineEdit _passwordInput = new();
     private readonly List<PlayerShipFactionPrototype> _factions = new();
     private readonly List<string> _shipsShownForFaction = new();
 
     public ShipSpawnWindow(
         IPrototypeManager proto,
-        Action<ProtoId<PlayerShipFactionPrototype>, ProtoId<PlayerShipBlueprintPrototype>> onConfirm,
+        Action<ProtoId<PlayerShipFactionPrototype>, ProtoId<PlayerShipBlueprintPrototype>, bool, string?> onConfirm,
         IReadOnlyCollection<string> unavailableBlueprints)
     {
         _proto = proto;
@@ -29,7 +31,7 @@ public sealed class ShipSpawnWindow : DefaultWindow
         _unavailableBlueprints = unavailableBlueprints;
 
         Title = Loc.GetString("player-ship-spawn-window-title");
-        SetSize = new Vector2(420, 220);
+        SetSize = new Vector2(460, 340);
 
         var root = new BoxContainer
         {
@@ -50,6 +52,23 @@ public sealed class ShipSpawnWindow : DefaultWindow
         _shipOption.OnItemSelected += args => _shipOption.SelectId(args.Id);
         root.AddChild(_shipOption);
 
+        _closedShipCheck.Text = Loc.GetString("player-ship-spawn-closed-check");
+        _closedShipCheck.OnToggled += args =>
+        {
+            _passwordInput.Editable = args.Pressed;
+            _passwordInput.ModulateSelfOverride = null;
+        };
+        root.AddChild(_closedShipCheck);
+
+        root.AddChild(new Label { Text = Loc.GetString("player-ship-spawn-password-label") });
+        _passwordInput.PlaceHolder = Loc.GetString("player-ship-spawn-password-placeholder");
+        _passwordInput.Editable = false;
+        _passwordInput.OnTextChanged += _ =>
+        {
+            _passwordInput.ModulateSelfOverride = null;
+        };
+        root.AddChild(_passwordInput);
+
         var confirm = new Button
         {
             Text = Loc.GetString("player-ship-spawn-confirm"),
@@ -68,7 +87,20 @@ public sealed class ShipSpawnWindow : DefaultWindow
             if (_shipOption.IsItemDisabled(shipIdx))
                 return;
 
-            _onConfirm(faction.ID, new ProtoId<PlayerShipBlueprintPrototype>(_shipsShownForFaction[shipIdx]));
+            var closedShip = _closedShipCheck.Pressed;
+            string? password = null;
+            if (closedShip)
+            {
+                password = _passwordInput.Text.Trim();
+                if (password.Length < 3)
+                {
+                    _passwordInput.ModulateSelfOverride = Color.IndianRed;
+                    _passwordInput.GrabKeyboardFocus();
+                    return;
+                }
+            }
+
+            _onConfirm(faction.ID, new ProtoId<PlayerShipBlueprintPrototype>(_shipsShownForFaction[shipIdx]), closedShip, password);
             Close();
         };
         root.AddChild(confirm);

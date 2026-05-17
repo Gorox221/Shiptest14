@@ -105,10 +105,11 @@ using Content.Client.GameTicking.Managers;
 using Content.Client.Lobby;
 using Content.Client.UserInterface.Controls;
 using Content.Client.Players.PlayTimeTracking;
+using Content.Client._Shiptest.ShipSpawn;
+using Content.Shared.Administration;
 using Content.Shared.CCVar;
 using Content.Shared.Preferences;
 using Content.Shared.Roles;
-using Robust.Client.Console;
 using Robust.Client.GameObjects;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
@@ -123,7 +124,6 @@ namespace Content.Client.LateJoin
     public sealed class LateJoinGui : DefaultWindow
     {
         [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-        [Dependency] private readonly IClientConsoleHost _consoleHost = default!;
         [Dependency] private readonly IConfigurationManager _configManager = default!;
         [Dependency] private readonly IEntitySystemManager _entitySystem = default!;
         [Dependency] private readonly JobRequirementsManager _jobRequirements = default!;
@@ -133,6 +133,7 @@ namespace Content.Client.LateJoin
         public event Action<(NetEntity, string)> SelectedId;
 
         private readonly ClientGameTicker _gameTicker;
+        private readonly ShipSpawnClientSystem _shipSpawn;
         private readonly SpriteSystem _sprites;
         private readonly CrewManifestSystem _crewManifest;
         private readonly ISawmill _sawmill;
@@ -150,6 +151,7 @@ namespace Content.Client.LateJoin
             _sprites = _entitySystem.GetEntitySystem<SpriteSystem>();
             _crewManifest = _entitySystem.GetEntitySystem<CrewManifestSystem>();
             _gameTicker = _entitySystem.GetEntitySystem<ClientGameTicker>();
+            _shipSpawn = _entitySystem.GetEntitySystem<ShipSpawnClientSystem>();
             _sawmill = _logManager.GetSawmill("latejoin.panel");
 
             Title = Loc.GetString("late-join-gui-title");
@@ -169,8 +171,33 @@ namespace Content.Client.LateJoin
             {
                 var (station, jobId) = x;
                 _sawmill.Info($"Late joining as ID: {jobId}");
-                _consoleHost.ExecuteCommand($"joingame {CommandParsing.Escape(jobId)} {station}");
-                Close();
+
+                var isLocked = _shipSpawn.LockedStations.TryGetValue(station, out var locked) && locked;
+                if (!isLocked)
+                {
+                    _shipSpawn.RequestJoinWithPassword(jobId, station);
+                    Close();
+                    return;
+                }
+
+                var dialog = new DialogWindow(
+                    Loc.GetString("player-ship-join-password-window-title"),
+                    new List<QuickDialogEntry>
+                    {
+                        new("password",
+                            QuickDialogEntryType.ShortText,
+                            Loc.GetString("player-ship-join-password-prompt"),
+                            Loc.GetString("player-ship-join-password-placeholder"))
+                    },
+                    ok: true,
+                    cancel: true);
+
+                dialog.OnConfirmed += responses =>
+                {
+                    responses.TryGetValue("password", out var password);
+                    _shipSpawn.RequestJoinWithPassword(jobId, station, password);
+                    Close();
+                };
             };
 
             _gameTicker.LobbyJobsAvailableUpdated += JobsAvailableUpdated;
@@ -188,6 +215,11 @@ namespace Content.Client.LateJoin
 
             foreach (var (id, name) in _gameTicker.StationNames)
             {
+                var isLocked = _shipSpawn.LockedStations.TryGetValue(id, out var locked) && locked;
+                var stationLabel = isLocked
+                    ? $"{name} {Loc.GetString("player-ship-latejoin-locked-suffix")}"
+                    : name;
+
                 var jobList = new BoxContainer
                 {
                     Orientation = LayoutOrientation.Vertical,
@@ -221,7 +253,7 @@ namespace Content.Client.LateJoin
                                 new Label()
                                 {
                                     StyleClasses = { "LabelBig" },
-                                    Text = name,
+                                    Text = stationLabel,
                                     Align = Label.AlignMode.Center,
                                 },
                                 collapseButton

@@ -7,8 +7,10 @@ using Content.Server.Chat.Managers;
 using Content.Server.GameTicking;
 using Content.Server._Shiptest.ShipAccess;
 using Content.Server._Shiptest.SpaceBiomes;
+using Content.Server._Shiptest.ShipSpawn;
 using Content.Server.Cargo.Components;
 using Content.Server.Cargo.Systems;
+using Content.Server.Station.Systems;
 using Content.Server.Station.Components;
 using Content.Server.Station.Systems;
 using Content.Shared.Access.Components;
@@ -52,6 +54,8 @@ public sealed class PlayerShipSpawnSystem : EntitySystem
     [Dependency] private readonly AccessReaderSystem _accessReader = default!;
     [Dependency] private readonly IGamePrototypeLoadManager _runtimePrototypes = default!;
     [Dependency] private readonly CargoSystem _cargo = default!;
+    [Dependency] private readonly PlayerShipJoinLockSystem _joinLock = default!;
+    [Dependency] private readonly StationJobsSystem _stationJobs = default!;
 
     /// <summary>
     /// Player ship blueprint ids that have already been spawned this round (one per id).
@@ -62,6 +66,7 @@ public sealed class PlayerShipSpawnSystem : EntitySystem
     {
         base.Initialize();
         SubscribeNetworkEvent<RequestPlayerShipSpawnEvent>(OnRequestSpawn);
+        SubscribeNetworkEvent<ShipJoinPasswordRequestEvent>(OnShipJoinRequest);
         SubscribeNetworkEvent<RequestPlayerShipSpawnAvailabilityEvent>(OnRequestAvailability);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
     }
@@ -87,6 +92,56 @@ public sealed class PlayerShipSpawnSystem : EntitySystem
         RaiseNetworkEvent(
             new PlayerShipConsumedBlueprintsSyncEvent(_claimedShipBlueprints.ToArray(), respondedToRequest: false),
             Filter.Broadcast());
+    }
+
+    private void OnShipJoinRequest(ShipJoinPasswordRequestEvent msg, EntitySessionEventArgs args)
+    {
+        var session = args.SenderSession;
+
+        if (_ticker.RunLevel != GameRunLevel.InRound)
+        {
+            _chat.DispatchServerMessage(session, Loc.GetString("player-ship-spawn-fail-not-in-round"));
+            return;
+        }
+
+        if (_ticker.UserHasJoinedGame(session))
+        {
+            _chat.DispatchServerMessage(session, Loc.GetString("player-ship-spawn-fail-already-playing"));
+            return;
+        }
+
+        if (_ticker.DisallowLateJoin)
+        {
+            _chat.DispatchServerMessage(session, Loc.GetString("player-ship-spawn-fail-latejoin-disabled"));
+            return;
+        }
+
+        if (!_proto.TryIndex(msg.JobId, out JobPrototype? job))
+        {
+            _chat.DispatchServerMessage(session, Loc.GetString("player-ship-join-fail-invalid-job"));
+            return;
+        }
+
+        var station = GetEntity(msg.Station);
+        if (station == EntityUid.Invalid || !_stationJobs.TryGetJobSlot(station, job, out var slots))
+        {
+            _chat.DispatchServerMessage(session, Loc.GetString("player-ship-join-fail-invalid-station"));
+            return;
+        }
+
+        if (slots == 0)
+        {
+            _chat.DispatchServerMessage(session, Loc.GetString("player-ship-join-fail-no-slots"));
+            return;
+        }
+
+        if (_joinLock.IsStationLocked(station) && !_joinLock.TryValidateJoinPassword(station, msg.Password))
+        {
+            _chat.DispatchServerMessage(session, Loc.GetString("player-ship-join-fail-bad-password"));
+            return;
+        }
+
+        _ticker.MakeJoinGame(session, station, msg.JobId);
     }
 
     private void OnRequestSpawn(RequestPlayerShipSpawnEvent msg, EntitySessionEventArgs args)
@@ -228,6 +283,8 @@ public sealed class PlayerShipSpawnSystem : EntitySystem
 
         var captainCoords = new EntityCoordinates(gridUid, loadedGrid.Value.Comp.LocalAABB.Center);
         _ticker.MakeJoinGame(session, shipStation, blueprint.CaptainJob.Id, silent: true, forceSpawn: captainCoords);
+
+        _joinLock.SetupLock(shipStation, session.UserId, blueprint.CaptainJob, jobs, msg.ClosedShip, msg.Password);
 
         _claimedShipBlueprints.Add(blueprint.ID);
         BroadcastClaimedBlueprints();
