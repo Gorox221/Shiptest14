@@ -1,18 +1,208 @@
 - type: biomeTemplate
   id: BeachPlanet
   layers:
-    - !type:BiomeMetaLayer
-      template: Grasslands
+    # Base tropical grassland.
+    - !type:BiomeTileLayer
       threshold: -1
-    - !type:BiomeMetaLayer
-      template: LowDesert
-      threshold: 0.4
+      tile: FloorGrassJungle
+    # Unified coast mask (pass 1): sand fringe around major oceans.
+    - !type:BiomeTileLayer
+      tile: FloorAsteroidSand
+      threshold: 0.10
       noise:
-        frequency: 0.004
+        seed: 5
         noiseType: OpenSimplex2
+        frequency: 0.0010
+        lacunarity: 2
         fractalType: FBm
         octaves: 2
+    # Unified coast mask (pass 2): secondary beaches/inlets.
+    - !type:BiomeTileLayer
+      tile: FloorAsteroidSand
+      threshold: 0.15
+      noise:
+        seed: 11
+        noiseType: OpenSimplex2
+        frequency: 0.00145
         lacunarity: 2
+        fractalType: FBm
+        octaves: 2
+    # Main oceans from the same mask family as sand.
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorAsteroidSand
+        - FloorGrassJungle
+      threshold: 0.16
+      noise:
+        seed: 5
+        noiseType: OpenSimplex2
+        frequency: 0.0010
+        lacunarity: 2
+        fractalType: FBm
+        octaves: 2
+      entities:
+        - FloorWaterEntity
+    # Secondary water expansion (keeps ocean shapes broad, not river-like).
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorAsteroidSand
+        - FloorGrassJungle
+      threshold: 0.22
+      noise:
+        seed: 11
+        noiseType: OpenSimplex2
+        frequency: 0.00145
+        lacunarity: 2
+        fractalType: FBm
+        octaves: 2
+      entities:
+        - FloorWaterEntity
+    # Grass decals.
+    - !type:BiomeDecalLayer
+      allowedTiles:
+        - FloorGrassJungle
+      divisions: 2
+      threshold: -0.7
+      noise:
+        seed: 20
+        noiseType: Cellular
+        frequency: 0.60
+      decals:
+        - BushAOne
+        - BushATwo
+        - BushAThree
+        - BushCOne
+        - BushCTwo
+        - BushCThree
+        - FlowersBROne
+        - FlowersBRTwo
+        - FlowersBRThree
+    # Trees on grass: visible and mostly non-clustered.
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorGrassJungle
+      threshold: 0.90
+      noise:
+        seed: 3
+        noiseType: OpenSimplex2
+        frequency: 0.16
+      entities:
+        - FloraTree
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorGrassJungle
+      threshold: 0.965
+      noise:
+        seed: 4
+        noiseType: OpenSimplex2
+        frequency: 0.17
+      entities:
+        - FloraTreeLarge
+    # Boulders (FloraRockSolid): visible and reasonably sparse.
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorGrassJungle
+      threshold: 0.91
+      noise:
+        seed: 23
+        noiseType: OpenSimplex2
+        frequency: 0.15
+      entities:
+        - FloraRockSolid
+    # WallRock layer: present, but still controlled.
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorAsteroidSand
+        - FloorGrassJungle
+      threshold: 0.93
+      noise:
+        seed: 9
+        noiseType: OpenSimplex2
+        frequency: 0.13
+      entities:
+        - WallRock
+    # General fauna (further reduced density).
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorGrassJungle
+        - FloorAsteroidSand
+      threshold: 0.97
+      noise:
+        seed: 12
+        noiseType: OpenSimplex2
+        frequency: 0.18
+      entities:
+        - MobCow
+        - MobPurpleSnake
+        - MobCrab
+        - MobIronCrab
+        - MobQuartzCrab
+        - MobSlimeXenobioBabyGrey
+        - MobParrot
+    # Pack-like clusters (rare).
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorGrassJungle
+        - FloorAsteroidSand
+      threshold: 0.985
+      noise:
+        seed: 22
+        noiseType: Cellular
+        frequency: 0.14
+        lacunarity: 2
+        fractalType: FBm
+        octaves: 2
+        cellularDistanceFunction: Euclidean
+        cellularReturnType: Distance2
+      entities:
+        - MobCow
+        - MobCow
+        - MobCrab
+        - MobCrab
+        - MobIronCrab
+        - MobQuartzCrab
+        - MobParrot
+    # Rare anomaly presence.
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorGrassJungle
+        - FloorAsteroidSand
+      threshold: 0.996
+      noise:
+        seed: 18
+        noiseType: OpenSimplex2
+        frequency: 0.08
+      entities:
+        - RandomAnomalySpawner
+    # Ocean re-application as final layers keeps water authoritative.
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorAsteroidSand
+        - FloorGrassJungle
+      threshold: 0.16
+      noise:
+        seed: 5
+        noiseType: OpenSimplex2
+        frequency: 0.0010
+        lacunarity: 2
+        fractalType: FBm
+        octaves: 2
+      entities:
+        - FloorWaterEntity
+    - !type:BiomeEntityLayer
+      allowedTiles:
+        - FloorAsteroidSand
+        - FloorGrassJungle
+      threshold: 0.22
+      noise:
+        seed: 11
+        noiseType: OpenSimplex2
+        frequency: 0.00145
+        lacunarity: 2
+        fractalType: FBm
+        octaves: 2
+      entities:
+        - FloorWaterEntity
 
 - type: biomeTemplate
   id: SandPlanet
