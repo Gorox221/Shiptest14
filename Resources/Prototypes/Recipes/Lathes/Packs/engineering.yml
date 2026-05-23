@@ -33,6 +33,7 @@
   - ClothingHeadHatCone
   - WeaponHammer
   - PortableBiomeSurveyor
+  - PlanetPortableOreDrill
 
 - type: latheRecipePack
   id: AtmosStatic

@@ -95,7 +95,7 @@ public sealed partial class ShuttleConsoleSystem
             Exists(planetBeacon.DestinationMap))
         {
             targetEntity = planetBeacon.DestinationMap;
-            targetPosition = _transform.GetWorldPosition(targetXform);
+            targetPosition = planetBeacon.ArrivalCenter;
         }
         else if (targetEntity == EntityUid.Invalid)
         {

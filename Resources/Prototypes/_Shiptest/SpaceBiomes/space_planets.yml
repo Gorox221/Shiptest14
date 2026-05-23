@@ -21,9 +21,12 @@
   arrivalMinOffset: 96
   arrivalSearchRadius: 420
   arrivalSearchStep: 32
-  restrictedRange: 700
-  mapBoundaryRange: 700
+  restrictedRange: 650
+  mapBoundaryRange: 650
   priority: 20
+  oreDepositMaxGroups: 3
+  oreDepositMinGroupSize: 2
+  oreDepositMaxGroupSize: 3
 
 - type: spaceTravelPlanet
   id: SandPlanet
@@ -38,6 +41,9 @@
   restrictedRange: 700
   mapBoundaryRange: 700
   priority: 20
+  oreDepositMaxGroups: 5
+  oreDepositMinGroupSize: 3
+  oreDepositMaxGroupSize: 5
 
 - type: spaceTravelPlanet
   id: PlasmaGiantPlanet
@@ -52,6 +58,9 @@
   restrictedRange: 700
   mapBoundaryRange: 700
   priority: 20
+  oreDepositMaxGroups: 7
+  oreDepositMinGroupSize: 4
+  oreDepositMaxGroupSize: 7
 
 - type: spaceTravelPlanet
   id: IcePlanet
@@ -66,3 +75,6 @@
   restrictedRange: 700
   mapBoundaryRange: 700
   priority: 20
+  oreDepositMaxGroups: 10
+  oreDepositMinGroupSize: 4
+  oreDepositMaxGroupSize: 7

@@ -113,6 +113,30 @@ public sealed partial class SpaceTravelPlanetPrototype : IPrototype
     /// </summary>
     [DataField]
     public int Priority = 10;
+
+    /// <summary>
+    /// Maximum ore deposit groups spawned on this planet.
+    /// </summary>
+    [DataField]
+    public int OreDepositMaxGroups = 12;
+
+    /// <summary>
+    /// Minimum deposits per group.
+    /// </summary>
+    [DataField]
+    public int OreDepositMinGroupSize = 2;
+
+    /// <summary>
+    /// Maximum deposits per group. Harder planets should use larger values.
+    /// </summary>
+    [DataField]
+    public int OreDepositMaxGroupSize = 4;
+
+    /// <summary>
+    /// Tile spacing between deposits inside one group.
+    /// </summary>
+    [DataField]
+    public int OreDepositTileSpacing = 2;
 }
 
 /// <summary>

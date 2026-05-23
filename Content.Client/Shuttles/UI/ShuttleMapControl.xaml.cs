@@ -595,7 +595,9 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
                             if (planetBeacon.DestinationMap != EntityUid.Invalid &&
                                 EntManager.EntityExists(planetBeacon.DestinationMap))
                             {
-                                arrivalCenter = new EntityCoordinates(planetBeacon.DestinationMap, targetCoords.Position);
+                                arrivalCenter = new EntityCoordinates(
+                                    planetBeacon.DestinationMap,
+                                    planetBeacon.ArrivalCenter);
                             }
 
                             ftlFree = _shuttles.TryFindNearbyFTLFree(

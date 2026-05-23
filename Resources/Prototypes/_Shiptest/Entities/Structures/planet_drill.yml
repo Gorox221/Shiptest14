@@ -1,0 +1,124 @@
+- type: entity
+  id: PlanetOreDeposit
+  name: ore deposit
+  description: A rich mineral vein suitable for automated drilling.
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Transform
+    anchored: true
+  - type: Sprite
+    sprite: _Shiptest/Structures/ore_deposit.rsi
+    state: icon
+    drawdepth: FloorObjects
+  - type: Clickable
+  - type: InteractionOutline
+  - type: RadarBlip
+    radarColor: "#C87832"
+    scale: 0.85
+    visibleFromOtherGrids: true
+  - type: OreDeposit
+    ores:
+    - SteelOre1Unprocessed
+    - Coal1Unprocessed
+    - SpaceQuartz1Unprocessed
+    - PlasmaOre1Unprocessed
+    - SilverOre1Unprocessed
+    - UraniumOre1Unprocessed
+    - GoldOre1Unprocessed
+    minYield: 1
+    maxYield: 2
+
+- type: entity
+  id: PlanetPortableOreDrill
+  name: portable ore drill
+  description: A foldable autonomous drill. Place and anchor it on an ore deposit.
+  parent: [ BaseItem, BaseDeployFoldable ]
+  components:
+  - type: Sprite
+    sprite: _Shiptest/Structures/ore_drill.rsi
+    noRot: true
+    layers:
+    - state: drill
+      map: [ "unfoldedLayer" ]
+    - state: drill_folded
+      map: [ "foldedLayer" ]
+      visible: false
+  - type: Transform
+    noRot: true
+  - type: Item
+    size: Huge
+  - type: Physics
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.35,-0.35,0.35,0.35"
+        density: 120
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: InteractionOutline
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.FoldedVisuals.State:
+        foldedLayer:
+          True: {visible: true}
+          False: {visible: false}
+        unfoldedLayer:
+          True: {visible: false}
+          False: {visible: true}
+  - type: Anchorable
+    delay: 1
+  - type: Damageable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 120
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [Destruction]
+    - trigger:
+        !type:DamageTrigger
+        damage: 60
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          SheetSteel1:
+            min: 2
+            max: 2
+      - !type:DoActsBehavior
+        acts: [Destruction]
+  - type: ContainerContainer
+    containers:
+      cell_slot: !type:ContainerSlot
+  - type: PowerCellSlot
+    cellSlotId: cell_slot
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+        startingItem: PowerCellMedium
+        whitelist:
+          tags:
+          - PowerCell
+          - PowerCellSmall
+  - type: ApcPowerReceiver
+    powerLoad: 200
+  - type: ExtensionCableReceiver
+  - type: OreDrill
+    spawnInterval: 3
+    powerPerCycle: 200
+    chargePerSecond: 160
+    depositRange: 0.8
+  - type: StaticPrice
+    price: 800
+

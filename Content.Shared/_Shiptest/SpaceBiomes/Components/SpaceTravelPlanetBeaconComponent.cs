@@ -1,3 +1,4 @@
+using System.Numerics;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared._Shiptest.SpaceBiomes.Components;
@@ -20,4 +21,10 @@ public sealed partial class SpaceTravelPlanetBeaconComponent : Component
 
     [DataField, AutoNetworkedField]
     public float ArrivalSearchStep = 32f;
+
+    /// <summary>
+    /// Fixed arrival position on <see cref="DestinationMap"/> (local map coordinates).
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public Vector2 ArrivalCenter;
 }
