@@ -96,7 +96,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Content.Shared._CorvaxGoob.Skills;
 using Content.Shared.Access;
 using Content.Shared.Guidebook;
 using Content.Shared.Players.PlayTimeTracking;
@@ -258,12 +257,6 @@ namespace Content.Shared.Roles
         /// </summary>
         [DataField]
         public int Goobcoins { get; private set; } = 1;
-
-        /// <summary>
-        /// CorvaxGoob: Skills that will be given on joining job.
-        /// </summary>
-        [DataField]
-        public HashSet<Skills> Skills = [];
     }
 
     /// <summary>

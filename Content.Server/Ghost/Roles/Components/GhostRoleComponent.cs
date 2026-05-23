@@ -33,7 +33,6 @@
 
 using Content.Server.Ghost.Roles.Raffles;
 using Content.Server.Mind.Commands;
-using Content.Shared._CorvaxGoob.Skills;
 using Content.Shared.Roles;
 using Robust.Shared.Prototypes;
 
@@ -138,13 +137,5 @@ public sealed partial class GhostRoleComponent : Component
     [DataField("job")]
     [Access(typeof(GhostRoleSystem), Other = AccessPermissions.ReadWriteExecute)] // also FIXME Friends
     public ProtoId<JobPrototype>? JobProto = null;
-
-    // CorvaxGoob-Skills-Start
-    /// <summary>
-    /// Skills that will be given on joining ghostrole.
-    /// </summary>
-    [DataField("skills")]
-    public HashSet<Skills> Skills = [];
-    // CorvaxGoob-Skills-End
 }
 

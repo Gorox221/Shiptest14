@@ -31,8 +31,6 @@
       max: 6
       playerRatio: 10
       jobBlacklist: [ Chaplain ] # GOOBSTATION
-      skills: # CorvaxGoob-Skills
-      - All
       blacklist:
         components:
         - CommandStaff # GOOBSTATION

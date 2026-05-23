@@ -39,8 +39,6 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
 using System.Linq;
-using Content.Server._CorvaxGoob.Skills;
-
 namespace Content.Server.Antag;
 
 public sealed partial class AntagSelectionSystem : GameRuleSystem<AntagSelectionComponent>
@@ -59,7 +57,6 @@ public sealed partial class AntagSelectionSystem : GameRuleSystem<AntagSelection
     [Dependency] private readonly TransformSystem _transform = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelist = default!;
     [Dependency] private readonly InventorySystem _inventory = default!; // Goobstation
-    [Dependency] private readonly SkillsSystem _skills = default!; // CorvaxGoob-Skills
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
 
     // arbitrary random number to give late joining some mild interest.
@@ -525,9 +522,6 @@ public sealed partial class AntagSelectionSystem : GameRuleSystem<AntagSelection
         // goob edit - actual pacifism implant
         foreach (var special in def.Special)
             special.AfterEquip(ent);
-
-        if (def.Skills is not null && def.Skills.Count > 0) // CorvaxGoob-Skills
-            _skills.GrantSkill(player, def.Skills);
 
         var afterEv = new AfterAntagEntitySelectedEvent(session, player, ent, def);
         RaiseLocalEvent(ent, ref afterEv, true);

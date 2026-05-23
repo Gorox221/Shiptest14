@@ -53,8 +53,6 @@
       max: 5
       mindRoles:
       - MindRolePirate
-      skills: # CorvaxGoob-Skills
-      - All
       startingGear: PirateGear
       components:
       - type: RandomMetadata

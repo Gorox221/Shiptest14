@@ -68,7 +68,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Content.Goobstation.Common.Construction; // Goobstation
 using Content.Server.Construction.Components;
-using Content.Shared._CorvaxGoob.Skills;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Construction;
 using Content.Shared.Construction.Prototypes;
@@ -246,11 +245,9 @@ namespace Content.Server.Construction
             var steps = new List<ConstructionGraphStep>();
             var used = new HashSet<EntityUid>();
 
-            bool hasSkill = _skills.HasSkill(user, Skills.AdvancedBuilding); // CorvaxGoob-Skills
-
             foreach (var step in edge.Steps)
             {
-                var delay = step.DoAfter; // CorvaxGoob-Skills
+                var delay = step.DoAfter;
 
                 var handled = false;
 
@@ -279,11 +276,6 @@ namespace Content.Server.Construction
                             }
                             else if (!_container.Insert(splitStack.Value, GetContainer(materialStep.Store)))
                                 continue;
-
-                            // CorvaxGoob-Skills-Start
-                            if (!hasSkill && IsAdvancedMaterial(entity))
-                                delay *= DelayModifierWithoutSkill;
-                            // CorvaxGoob-Skills-End
 
                             handled = true;
                             break;
@@ -330,7 +322,7 @@ namespace Content.Server.Construction
 
                 steps.Add(step);
 
-                doAfterTime += step.DoAfter; // CorvaxGoob-Skills
+                doAfterTime += step.DoAfter;
             }
 
             if (failed)

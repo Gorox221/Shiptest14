@@ -79,12 +79,6 @@ public sealed class CCCVars
         CVarDef.Create("tts.rate_limit_count", 3, CVar.SERVERONLY);
 
     /// <summary>
-    /// Will skills be applied to players.
-    /// </summary>
-    public static readonly CVarDef<bool> SkillsEnabled =
-        CVarDef.Create("skills.enabled", true, CVar.SERVERONLY);
-
-    /// <summary>
     /// Show MRP-designated jobs in the lobby and late join.
     /// </summary>
     public static readonly CVarDef<bool> MrpJobsEnabled =

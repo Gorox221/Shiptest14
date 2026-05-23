@@ -68,8 +68,6 @@
       playerRatio: 12
       chaosScore: 200
       jobBlacklist: [ Chaplain ] # GOOBSTATION
-      skills: # CorvaxGoob-Skills
-      - All
       blacklist:
         components:
         - CommandStaff
@@ -355,8 +353,6 @@
       fallbackRoles: [ Nukeops, NukeopsCommander ]
       spawnerPrototype: SpawnPointNukeopsMedic
       startingGear: SyndicateOperativeMedicFullHonkops
-      skills: # CorvaxGoob-Skills
-      - All
       roleLoadout:
       - RoleSurvivalNukieHonkops
       components:
@@ -413,8 +409,6 @@
       max: 1
       playerRatio: 40 # from 20 --> 40 , makes it less likely to spawn (Fuck devils)
       chaosScore: 150
-      skills: # CorvaxGoob-Skills
-      - All
       jobBlacklist: [ Chaplain, Mime, ChiefEngineer, ResearchDirector, Quartermaster ] #chaplain is obvious, mime can't write.
       mindRoles:
       - DevilMindRole

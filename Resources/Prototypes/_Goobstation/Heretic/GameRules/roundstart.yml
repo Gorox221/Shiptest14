@@ -39,8 +39,6 @@
       chaosScore: 250
       lateJoinAdditional: true
       jobBlacklist: [ Chaplain, ] # GOOBSTATION
-      skills: # CorvaxGoob-Skills
-      - All
       blacklist:
         components:
         - CommandStaff
@@ -74,8 +72,6 @@
       playerRatio: 20
       lateJoinAdditional: true
       jobBlacklist: [ Chaplain ] # GOOBSTATION
-      skills: # CorvaxGoob-Skills
-      - All
       blacklist:
         components:
         - CommandStaff

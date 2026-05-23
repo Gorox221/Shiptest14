@@ -36,9 +36,6 @@
     - type: GhostRole
       name: job-name-captain
       description: ghost-role-information-command-description
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - Shooting
     - type: Loadout
       prototypes: [ VisitorCaptain, VisitorCaptainAlt ]
       roleLoadout: [ RoleSurvivalStandard ]
@@ -50,9 +47,6 @@
     - type: GhostRole
       name: job-name-ce
       description: ghost-role-information-command-description
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - AdvancedBuilding
     - type: Loadout
       prototypes: [ VisitorCE, VisitorCEAlt ]
       roleLoadout: [ RoleSurvivalExtended ]
@@ -64,10 +58,6 @@
     - type: GhostRole
       name: job-name-cmo
       description: ghost-role-information-command-description
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - Surgery
-      - MedicalEquipment
     - type: Loadout
       prototypes: [ VisitorCMO, VisitorCMOAlt ]
       roleLoadout: [ RoleSurvivalMedical ]
@@ -79,8 +69,6 @@
     - type: GhostRole
       name: job-name-hop
       description: ghost-role-information-command-description
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
     - type: Loadout
       prototypes: [ VisitorHOP, VisitorHOPAlt ]
       roleLoadout: [ RoleSurvivalStandard ]
@@ -92,9 +80,6 @@
     - type: GhostRole
       name: job-name-hos
       description: ghost-role-information-command-description
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - Shooting
     - type: Loadout
       prototypes: [ VisitorHOS, VisitorHOSAlt ]
       roleLoadout: [ RoleSurvivalSecurity ]
@@ -106,9 +91,6 @@
     - type: GhostRole
       name: job-name-rd
       description: ghost-role-information-command-description
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - AdvancedBuilding
     - type: Loadout
       prototypes: [ VisitorRD, VisitorRDAlt ]
       roleLoadout: [ RoleSurvivalStandard ]
@@ -120,8 +102,6 @@
     - type: GhostRole
       name: job-name-qm
       description: ghost-role-information-command-description
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
     - type: Loadout
       prototypes: [ VisitorQM, VisitorQMAlt ]
       roleLoadout: [ RoleSurvivalStandard ]
@@ -137,9 +117,6 @@
       name: ghost-role-information-security-name
       description: ghost-role-information-security-description
       rules: ghost-role-information-nonantagonist-rules
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - Shooting
       raffle:
         settings: default
 
@@ -193,8 +170,6 @@
       name: ghost-role-information-cargo-name
       description: ghost-role-information-cargo-description
       rules: ghost-role-information-nonantagonist-rules
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
       raffle:
         settings: short
 
@@ -214,10 +189,6 @@
   components:
     - type: GhostRole
       name: job-name-salvagespec
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - Shooting
-      - Butchering
     - type: Loadout
       prototypes: [ VisitorSalvageSpecialist, VisitorSalvageSpecialistAlt ]
       roleLoadout: [ RoleSurvivalStandard ]
@@ -232,9 +203,6 @@
       name: ghost-role-information-engineering-name
       description: ghost-role-information-engineering-description
       rules: ghost-role-information-nonantagonist-rules
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - AdvancedBuilding
       raffle:
         settings: short
 
@@ -278,10 +246,6 @@
       name: ghost-role-information-medical-name
       description: ghost-role-information-medical-description
       rules: ghost-role-information-nonantagonist-rules
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - Surgery
-      - MedicalEquipment
       raffle:
         settings: short
 
@@ -375,9 +339,6 @@
       name: ghost-role-information-science-name
       description: ghost-role-information-science-description
       rules: ghost-role-information-nonantagonist-rules
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - AdvancedBuilding
       raffle:
         settings: short
 
@@ -436,8 +397,6 @@
       name: ghost-role-information-civilian-name
       description: ghost-role-information-civilian-description
       rules: ghost-role-information-nonantagonist-rules
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
       raffle:
         settings: short
 
@@ -490,9 +449,6 @@
   components:
     - type: GhostRole
       name: job-name-chef
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
-      - Butchering
     - type: Loadout
       prototypes: [ VisitorChef, VisitorChefAlt ]
       roleLoadout: [ RoleSurvivalStandard ]
@@ -672,9 +628,6 @@
       name: ghost-role-information-lost-challenge-commander-name
       description: ghost-role-information-lost-challenge-commander-description
       rules: ghost-role-information-lost-challenge-commander-rules
-      skills: # CorvaxGoob-Skills
-        - ShuttleControl
-        - AdvancedBuilding
       raffle:
         settings: default
     - type: GhostTakeoverAvailable
@@ -696,9 +649,6 @@
       name: ghost-role-information-lost-challenge-commander-name
       description: ghost-role-information-lost-challenge-commander-description
       rules: ghost-role-information-lost-challenge-commander-rules
-      skills: # CorvaxGoob-Skills
-        - Surgery
-        - MedicalEquipment
       raffle:
         settings: default
     - type: GhostTakeoverAvailable
@@ -741,9 +691,6 @@
       name: ghost-role-information-lost-challenge-commander-name
       description: ghost-role-information-lost-challenge-commander-description
       rules: ghost-role-information-lost-challenge-commander-rules
-      skills: # CorvaxGoob-Skills
-        - ShuttleControl
-        - Shooting
       raffle:
         settings: default
     - type: GhostTakeoverAvailable
@@ -765,8 +712,6 @@
       name: ghost-role-information-lost-challenge-commander-name
       description: ghost-role-information-lost-challenge-commander-description
       rules: ghost-role-information-lost-challenge-commander-rules
-      skills: # CorvaxGoob-Skills
-        - AdvancedBuilding
       raffle:
         settings: default
     - type: GhostTakeoverAvailable
@@ -788,8 +733,6 @@
       name: ghost-role-information-lost-challenge-commander-name
       description: ghost-role-information-lost-challenge-commander-description
       rules: ghost-role-information-lost-challenge-commander-rules
-      skills: # CorvaxGoob-Skills
-        - ShuttleControl
       raffle:
         settings: default
     - type: GhostTakeoverAvailable
@@ -815,8 +758,6 @@
       name: ghost-role-information-lost-challenge-cargo-technican-name
       description: ghost-role-information-lost-challenge-cargo-technican-description
       rules: ghost-role-information-lost-disaster-challenge-cargo-technican-rules
-      skills: # CorvaxGoob-Skills
-        - ShuttleControl
       raffle:
         settings: short
     - type: GhostTakeoverAvailable
@@ -853,8 +794,6 @@
       name: ghost-role-information-syndie-soldier-teamlead-name
       description: ghost-role-information-syndie-soldier-teamlead-description
       rules: ghost-role-information-rules-team-antagonist
-      skills: # CorvaxGoob-Skills
-        - All
       mindRoles:
       - MindRoleGhostRoleTeamAntagonist
       raffle:
@@ -875,8 +814,6 @@
       name: ghost-role-information-syndie-soldier-name
       description: ghost-role-information-syndie-soldier-description
       rules: ghost-role-information-rules-team-antagonist
-      skills: # CorvaxGoob-Skills
-        - All
       mindRoles:
       - MindRoleGhostRoleTeamAntagonist
       raffle:
@@ -896,9 +833,6 @@
       name: ghost-role-information-syndie-disaster-victim-name
       description: ghost-role-information-syndie-disaster-victim-description
       rules: ghost-role-information-nonantagonist-rules
-      skills: # CorvaxGoob-Skills
-        - ShuttleControl
-        - Shooting
       raffle:
         settings: short
     - type: Loadout
@@ -916,9 +850,6 @@
       name: ghost-role-information-pirate-name
       description: ghost-role-information-pirate-description
       rules: ghost-role-information-rules-team-antagonist
-      skills: # CorvaxGoob-Skills
-        - ShuttleControl
-        - Shooting
       mindRoles:
       - MindRoleGhostRoleTeamAntagonist
       raffle:

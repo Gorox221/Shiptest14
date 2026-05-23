@@ -48,8 +48,6 @@
       max: 1
       pickPlayer: false
       startingGear: LoneAbductorGear
-      skills: # CorvaxGoob-Skills
-      - All
       briefing:
         text: abductor-role-greeting
         color: Green
@@ -142,8 +140,6 @@
       max: 1
       pickPlayer: false
       startingGear: AbductorScientistGear
-      skills: # CorvaxGoob-Skills
-      - All
       briefing:
         text: abductor-role-greeting
         color: Green
@@ -189,8 +185,6 @@
       max: 1
       pickPlayer: false
       startingGear: AbductorAgentGear
-      skills: # CorvaxGoob-Skills
-      - All
       briefing:
         text: abductor-role-greeting
         color: Green

@@ -460,8 +460,6 @@
       max: 1
       pickPlayer: false
       startingGear: SpaceNinjaGear
-      skills: # CorvaxGoob-Skills
-      - All
       roleLoadout:
       - RoleSurvivalEVA
       briefing:
@@ -520,8 +518,6 @@
       max: 1
       pickPlayer: false
       startingGear: ParadoxCloneGear
-      skills: # CorvaxGoob-Skills
-      - All
       roleLoadout:
       - RoleSurvivalVoxTank # give vox something to breath in case they don't get a copy
       - RoleSurvivalPlasmaTank # Goobstation
@@ -866,8 +862,6 @@
     - prefRoles: [ InitialInfected ]
       max: 3
       playerRatio: 10
-      skills: # CorvaxGoob-Skills
-      - All
       blacklist:
         components:
         - BibleUser
@@ -917,8 +911,6 @@
       pickPlayer: false
       startingGear: SyndicateLoneOperativeGearFull
       unequipOldGear: true
-      skills: # CorvaxGoob-Skills
-      - All
       roleLoadout:
       - RoleSurvivalNukie
       components:
@@ -966,8 +958,6 @@
       max: 2
       playerRatio: 10
       chaosScore: 200 # Goobstation - same as roundstart traitor gamerule
-      skills: # CorvaxGoob-Skills
-      - All
       blacklist:
         components:
         - AntagImmune

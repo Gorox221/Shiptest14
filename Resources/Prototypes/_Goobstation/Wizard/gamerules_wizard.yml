@@ -39,8 +39,6 @@
       mindRoles:
       - MindRoleWizard
       startingGear: WizardGear
-      skills: # CorvaxGoob-Skills
-      - All
       unequipOldGear: true
       roleLoadout:
       - RoleSurvivalEVA
@@ -104,8 +102,6 @@
       - MindRoleWizard
       startingGear: WizardGear
       unequipOldGear: true
-      skills: # CorvaxGoob-Skills
-      - All
       roleLoadout:
       - RoleSurvivalEVA
       components:

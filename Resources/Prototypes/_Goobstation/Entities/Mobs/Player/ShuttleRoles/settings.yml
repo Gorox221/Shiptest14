@@ -12,8 +12,6 @@
       name: ghost-role-information-alien-tourist-name
       description: ghost-role-information-alien-tourist-description
       rules: ghost-role-information-nonantagonist-rules
-      skills: # CorvaxGoob-Skills
-      - ShuttleControl
       raffle:
         settings: default
     - type: RandomMetadata

@@ -88,9 +88,6 @@
   id: SeismicCharge
 
 - type: Tag
-  id: Skills
-
-- type: Tag
   id: TelescopicBaton
 
 - type: Tag

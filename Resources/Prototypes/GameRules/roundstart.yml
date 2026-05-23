@@ -264,8 +264,6 @@
       startingGear: SyndicateCommanderGearFull
       unequipOldGear: true
       chaosScore: 300 # Goobstation
-      skills: # CorvaxGoob-Skills
-      - All
       roleLoadout:
       - RoleSurvivalNukie
       components:
@@ -285,8 +283,6 @@
       startingGear: SyndicateOperativeMedicFull
       unequipOldGear: true
       chaosScore: 300 # Goobstation
-      skills: # CorvaxGoob-Skills
-      - All
       roleLoadout:
       - RoleSurvivalNukie
       components:
@@ -310,8 +306,6 @@
       chaosScore: 300 # Goobstation
       startingGear: SyndicateOperativeGearFull
       unequipOldGear: true
-      skills: # CorvaxGoob-Skills
-      - All
       roleLoadout:
       - RoleSurvivalNukie
       components:
@@ -381,8 +375,6 @@
       max: 8
       playerRatio: 10
       chaosScore: 150 # Goobstation
-      skills: # CorvaxGoob-Skills
-      - All
       blacklist:
         components:
         - CommandStaff # Goobstation
@@ -406,8 +398,6 @@
     - prefRoles: [ HeadRev ]
       max: 3
       playerRatio: 15
-      skills: # CorvaxGoob-Skills
-      - All
       blacklist:
         components:
         - CommandStaff # Goobstation
@@ -508,8 +498,6 @@
       max: 4
       playerRatio: 15
       jobBlacklist: [ Chaplain ] # Goobstation
-      skills: # CorvaxGoob-Skills
-      - All
       blacklist:
         components:
         - CommandStaff # Goobstation

@@ -75528,15 +75528,6 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 33.5,60.5
       parent: 1
-- proto: SkillsImplanter
-  entities:
-  - uid: 547
-    components:
-    - type: Transform
-      parent: 539
-    - type: Physics
-      canCollide: False
-    - type: InsideEntityStorage
 - proto: Skub
   entities:
   - uid: 418

@@ -263,7 +263,6 @@
       - EldritchInfluence
       - EldritchInfluenceSpent
       - Admin
-  - type: IgnoreSkills # CorvaxGoob-Skills
   # Corvax-Goob-start
   - type: MovementSpeedModifier
     baseSprintSpeed: 30

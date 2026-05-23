@@ -101,7 +101,6 @@ entities:
     - type: BasicEntityAmmoProvider
       proto: ProjectileFireball
     - type: GhostRole
-      skills: []
       mindRoles:
       - MindRoleGhostRoleNeutral
       description: 'Вы, разумный лавовый кристалл, который должен сохранить свой вид и принести '
