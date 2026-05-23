@@ -200,18 +200,6 @@
     back:
     - FlippoLighter
   groupBy: "smokeables"
-  effects:
-  - !type:GroupLoadoutEffect
-    proto: LigtherZippo
-
-- type: loadoutEffectGroup
-  id: LigtherZippo
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobDetective
-      time: 3600 # 1 hours
 # CorvaxGoob-loadouts-end.
 
 # Pins
@@ -508,19 +496,7 @@
   storage:
     back:
     - FoodSnackLollypopWrappedTricordrazine
-  effects:
-  - !type:GroupLoadoutEffect
-    proto: LollypopTricordrazine
   groupBy: "candy"
-
-- type: loadoutEffectGroup
-  id: LollypopTricordrazine
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:DepartmentTimeRequirement
-      department: Medical
-      time: 360000 # 100 hours
 # CorvaxGoob-loadouts-end.
 
 # Towels

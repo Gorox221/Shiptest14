@@ -80,17 +80,7 @@
 # Senior times
 - type: loadoutEffectGroup
   id: SeniorEngineering
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobAtmosphericTechnician
-      time: 21600 #6 hrs
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobStationEngineer
-      time: 21600 #6 hrs
+  effects: []
 
 # Head
 - type: startingGear

@@ -78,22 +78,12 @@
 # For mantles
 - type: loadoutEffectGroup
   id: MasterRD
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobResearchDirector
-      time: 72000 #20 hrs
+  effects: []
 
 # Goobstation - For Ensembles
 - type: loadoutEffectGroup
   id: GrandMasterRD
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobResearchDirector
-      time: 360000 # 100 hrs
+  effects: []
 
 # Head
 - type: loadout

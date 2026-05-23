@@ -78,32 +78,17 @@
 # For mantles
 - type: loadoutEffectGroup
   id: MasterHoP
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobHeadOfPersonnel
-      time: 72000 #20 hrs
+  effects: []
 
 # Goobstation - For Ensembles
 - type: loadoutEffectGroup
   id: GrandMasterHoP
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobHeadOfPersonnel
-      time: 360000 # 100 hrs
+  effects: []
 
 # Professional HoP Time
 - type: loadoutEffectGroup
   id: ProfessionalHoP
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobHeadOfPersonnel
-      time: 54000 #15 hrs, special reward for HoP mains
+  effects: []
 
 # Jumpsuit
 - type: loadout

@@ -82,22 +82,12 @@
 # For mantles
 - type: loadoutEffectGroup
   id: MasterCap
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobCaptain
-      time: 72000 #20 hrs
+  effects: []
 
 # Goobstation - For Ensembles
 - type: loadoutEffectGroup
   id: GrandMasterCap
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobCaptain
-      time: 360000 # 100 hrs
+  effects: []
 
 # Jumpsuit
 - type: loadout
@@ -189,12 +179,7 @@
   id: VeteranCaptainCloak
   equipment:
     neck: ClothingNeckCloakVetCap
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobCaptain
-      time: 360000 #100 hrs
+  effects: []
 
 - type: loadout # Goobstation - Ensembles
   id: CaptainEnsemble

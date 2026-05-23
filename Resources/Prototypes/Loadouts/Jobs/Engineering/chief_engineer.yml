@@ -78,22 +78,12 @@
 # For mantles
 - type: loadoutEffectGroup
   id: MasterCE
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobChiefEngineer
-      time: 72000 #20 hrs
+  effects: []
 
 # Goobstation - For Ensembles
 - type: loadoutEffectGroup
   id: GrandMasterCE
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobChiefEngineer
-      time: 360000 # 100 hrs
+  effects: []
 
 # Jumpsuit
 - type: loadout

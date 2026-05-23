@@ -78,22 +78,12 @@
 # For mantles
 - type: loadoutEffectGroup
   id: MasterQM
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobQuartermaster
-      time: 72000 #20 hrs
+  effects: []
 
 # Goobstation - For Ensembles
 - type: loadoutEffectGroup
   id: GrandMasterQM
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobQuartermaster
-      time: 360000 # 100 hrs
+  effects: []
 
 # Jumpsuit
 - type: loadout

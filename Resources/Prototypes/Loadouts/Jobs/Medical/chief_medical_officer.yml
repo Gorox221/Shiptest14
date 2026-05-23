@@ -80,22 +80,12 @@
 # For mantles
 - type: loadoutEffectGroup
   id: MasterCMO
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobChiefMedicalOfficer
-      time: 72000 #20 hrs
+  effects: []
 
 # Goobstation - For Ensembles
 - type: loadoutEffectGroup
   id: GrandMasterCMO
-  effects:
-  - !type:JobRequirementLoadoutEffect
-    requirement:
-      !type:RoleTimeRequirement
-      role: JobChiefMedicalOfficer
-      time: 360000 # 100 hrs
+  effects: []
 
 # Jumpsuit
 - type: loadout
