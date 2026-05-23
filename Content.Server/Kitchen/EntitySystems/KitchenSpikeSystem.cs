@@ -94,7 +94,6 @@
 
 using Content.Goobstation.Common.Changeling;
 using Content.Goobstation.Shared.Changeling.Components;
-using Content.Server._CorvaxGoob.Skills;
 using Content.Server.Administration.Logs;
 using Content.Server.Body.Systems;
 using Content.Server.Kitchen.Components;

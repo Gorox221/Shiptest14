@@ -1,4 +1,3 @@
-using Content.Shared._CorvaxGoob.Skills;
 using Content.Shared._EinsteinEngines.Silicon.Components;
 using Content.Shared._Shitmed.CCVar;
 using Content.Shared._Shitmed.Medical.Surgery.Tools;
@@ -11,7 +10,6 @@ namespace Content.Shared._Shitmed.Medical.Surgery;
 public abstract partial class SharedSurgerySystem
 {
     [Dependency] private readonly IConfigurationManager _config = default!;
-    [Dependency] private readonly SharedSkillsSystem _skills = default!; // CorvaxGoob
 
     private EntityQuery<SurgeryTargetComponent> _targetQuery;
 
@@ -32,12 +30,9 @@ public abstract partial class SharedSurgerySystem
         if (!IsLyingDown(target, user))
             return;
 
-        if (_noSelfOperate && user == target
-            // CorvaxGoob-start: SelfOperate who has SelfSurgery skill
-            && !_skills.HasSkill(user, Skills.SelfSurgery))
+        if (_noSelfOperate && user == target)
         {
-            _popup.PopupEntity(Loc.GetString("surgery-error-self-surgery"), user, user); // Client -> Entity
-            // CorvaxGoob-end
+            _popup.PopupEntity(Loc.GetString("surgery-error-self-surgery"), user, user);
             return;
         }
 

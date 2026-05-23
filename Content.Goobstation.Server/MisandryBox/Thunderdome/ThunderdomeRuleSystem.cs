@@ -41,8 +41,6 @@ using Robust.Shared.Random;
 using Robust.Shared.Containers;
 using Robust.Shared.Spawners;
 using Robust.Shared.Timing;
-using Content.Server._CorvaxGoob.Skills;
-
 namespace Content.Goobstation.Server.MisandryBox.Thunderdome;
 
 public sealed class ThunderdomeRuleSystem : EntitySystem
@@ -64,8 +62,6 @@ public sealed class ThunderdomeRuleSystem : EntitySystem
     [Dependency] private readonly TemporaryMindSystem _tempMind = default!;
     [Dependency] private readonly ILocalizationManager _loc = default!;
     [Dependency] private readonly GunSystem _gun = default!;
-
-    [Dependency] private readonly SkillsSystem _skills = default!;
 
     private const string RulePrototype = "ThunderdomeRule";
     private EntityUid? _ruleEntity;
@@ -297,8 +293,6 @@ public sealed class ThunderdomeRuleSystem : EntitySystem
             return;
 
         rule.Players.Add(GetNetEntity(mob));
-
-        _skills.GrantAllSkills(mob); // CorvaxGoob-Skills
 
         _activeEuis.Remove(session);
 

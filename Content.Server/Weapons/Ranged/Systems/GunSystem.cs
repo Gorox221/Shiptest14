@@ -120,7 +120,6 @@ using System.Linq;
 using System.Numerics;
 using Content.Goobstation.Common.CCVar;
 using Content.Goobstation.Common.Projectiles; // Goobstation
-using Content.Server._CorvaxGoob.Skills;
 using Content.Server.Atmos.Components;
 using Content.Shared.Atmos.Components;
 using Content.Server.Atmos.EntitySystems;
