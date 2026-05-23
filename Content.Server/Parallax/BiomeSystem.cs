@@ -33,6 +33,7 @@ using Content.Server.Shuttles.Events;
 using Content.Server.Shuttles.Systems;
 using Content.Shared.Atmos;
 using Content.Shared.Ghost;
+using Content.Shared.Mobs.Components;
 using Content.Shared.Gravity;
 using Content.Shared.Light.Components;
 using Content.Shared.Parallax.Biomes;
@@ -852,12 +853,12 @@ public sealed partial class BiomeSystem : SharedBiomeSystem
                 if (anchored.MoveNext(out _) || !TryGetEntity(indices, component, (gridUid, grid), out var entPrototype))
                     continue;
 
-                // TODO: Fix non-anchored ents spawning.
-                // Just track loaded chunks for now.
                 var ent = Spawn(entPrototype, _mapSystem.GridTileToLocal(gridUid, grid, indices));
 
-                // At least for now unless we do lookups or smth, only work with anchoring.
-                if (_xformQuery.TryGetComponent(ent, out var xform) && !xform.Anchored)
+                // Anchor static biome props (trees, water, rocks). Mobs must stay unanchored to move.
+                if (_xformQuery.TryGetComponent(ent, out var xform)
+                    && !xform.Anchored
+                    && !HasComp<MobStateComponent>(ent))
                 {
                     _transform.AnchorEntity((ent, xform), (gridUid, grid), indices);
                 }

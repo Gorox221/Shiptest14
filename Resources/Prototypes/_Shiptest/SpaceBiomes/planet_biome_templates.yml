@@ -135,8 +135,6 @@
         - MobCow
         - MobPurpleSnake
         - MobCrab
-        - MobIronCrab
-        - MobQuartzCrab
         - MobSlimeXenobioBabyGrey
         - MobParrot
     # Pack-like clusters (rare).
@@ -159,21 +157,7 @@
         - MobCow
         - MobCrab
         - MobCrab
-        - MobIronCrab
-        - MobQuartzCrab
         - MobParrot
-    # Rare anomaly presence.
-    - !type:BiomeEntityLayer
-      allowedTiles:
-        - FloorGrassJungle
-        - FloorAsteroidSand
-      threshold: 0.996
-      noise:
-        seed: 18
-        noiseType: OpenSimplex2
-        frequency: 0.08
-      entities:
-        - RandomAnomalySpawner
     # Ocean re-application as final layers keeps water authoritative.
     - !type:BiomeEntityLayer
       allowedTiles:
