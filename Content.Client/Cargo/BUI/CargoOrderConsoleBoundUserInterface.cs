@@ -185,7 +185,6 @@ namespace Content.Client.Cargo.BUI
             _menu.PopulateCategories();
             _menu.PopulateOrders(orders);
             _menu.PopulateAccountActions();
-            _menu.PopulateAccounts(); // CorvaxGoob-CargoFeatures
         }
 
         protected override void UpdateState(BoundUserInterfaceState state)

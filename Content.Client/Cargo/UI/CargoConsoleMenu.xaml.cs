@@ -44,8 +44,6 @@ namespace Content.Client.Cargo.UI
     [GenerateTypedNameReferences]
     public sealed partial class CargoConsoleMenu : FancyWindow
     {
-        [Dependency] private readonly IGameTiming _timing = default!;
-
         private readonly IEntityManager _entityManager;
         private readonly IPrototypeManager _protoManager;
         private readonly CargoSystem _cargoSystem;
@@ -55,11 +53,6 @@ namespace Content.Client.Cargo.UI
 
         private readonly EntityQuery<CargoOrderConsoleComponent> _orderConsoleQuery;
         private readonly EntityQuery<StationBankAccountComponent> _bankQuery;
-
-        // CorvaxGoob-CargoFeatures
-        private TimeSpan _nextAccountsPopulateTime = TimeSpan.Zero;
-        private readonly TimeSpan _accountPopulateInterval = TimeSpan.FromSeconds(5);
-        // CorvaxGoob-CargoFeatures-End
 
         public event Action<ButtonEventArgs>? OnItemSelected;
         public event Action<ButtonEventArgs>? OnOrderApproved;
@@ -357,96 +350,6 @@ namespace Content.Client.Cargo.UI
             }
         }
 
-        // CorvaxGoob-CargoFeatures-Start
-        /// <summary>
-        /// Отображение балансов других аккаунтов, процентов за продажу.
-        /// </summary>
-        public void PopulateAccounts()
-        {
-            // Частично взято из консоли распределения средств.
-
-            if (!_entityManager.TryGetComponent<StationBankAccountComponent>(_station, out var bank) ||
-                !_entityManager.TryGetComponent<CargoOrderConsoleComponent>(_owner, out var console))
-                return;
-
-            EntriesContainer.RemoveAllChildren();
-
-            var accountHeadNameLabel = new RichTextLabel
-            {
-                HorizontalAlignment = HAlignment.Center,
-            };
-            accountHeadNameLabel.SetMarkup(Loc.GetString("cargo-funding-alloc-console-label-account"));
-            EntriesContainer.AddChild(accountHeadNameLabel);
-
-            var accountHeadCodeLabel = new RichTextLabel
-            {
-                HorizontalAlignment = HAlignment.Center,
-            };
-            accountHeadCodeLabel.SetMarkup(Loc.GetString("cargo-funding-alloc-console-label-code"));
-            EntriesContainer.AddChild(accountHeadCodeLabel);
-
-            var accountHeadBalanceLabel = new RichTextLabel
-            {
-                HorizontalAlignment = HAlignment.Center,
-            };
-            accountHeadBalanceLabel.SetMarkup(Loc.GetString("cargo-funding-alloc-console-label-balance"));
-            EntriesContainer.AddChild(accountHeadBalanceLabel);
-
-            var accountHeadCutLabel = new RichTextLabel
-            {
-                HorizontalAlignment = HAlignment.Center,
-            };
-            accountHeadCutLabel.SetMarkup(Loc.GetString("cargo-funding-alloc-console-label-cut"));
-            EntriesContainer.AddChild(accountHeadCutLabel);
-
-            LockboxCut.PlaceHolder = (100 - (int) (bank.LockboxCut * 100)).ToString();
-            PrimaryCut.PlaceHolder = ((int) (bank.PrimaryCut * 100)).ToString();
-
-            foreach (var account in bank.Accounts.Keys)
-            {
-                if (account == console.Account)
-                    continue;
-
-                var accountProto = _protoManager.Index(account);
-
-                var accountNameLabel = new RichTextLabel
-                {
-                    Modulate = accountProto.Color,
-                    Margin = new Thickness(0, 0, 10, 0)
-                };
-                accountNameLabel.SetMarkup($"[bold]{Loc.GetString(accountProto.Name)}[/bold]");
-                EntriesContainer.AddChild(accountNameLabel);
-
-                var codeLabel = new RichTextLabel
-                {
-                    Text = $"[font=\"Monospace\"]{Loc.GetString(accountProto.Code)}[/font]",
-                    HorizontalAlignment = HAlignment.Center,
-                    Margin = new Thickness(5, 0),
-                };
-                EntriesContainer.AddChild(codeLabel);
-
-                var balanceLabel = new RichTextLabel
-                {
-                    Text = Loc.GetString("cargo-console-menu-points-amount", ("amount", bank.Accounts[accountProto])),
-                    HorizontalExpand = true,
-                    HorizontalAlignment = HAlignment.Center,
-                    Margin = new Thickness(5, 0),
-                };
-                EntriesContainer.AddChild(balanceLabel);
-
-                var box = new LineEdit
-                {
-                    HorizontalAlignment = HAlignment.Center,
-                    HorizontalExpand = true,
-                    PlaceHolder = (bank.RevenueDistribution[account] * 100).ToString(),
-                    Editable = false,
-                    MinWidth = 30
-                };
-                EntriesContainer.AddChild(box);
-            }
-        }
-        // CorvaxGoob-CargoFeatures-End
-
         public void UpdateStation(EntityUid station)
         {
             _station = station;
@@ -474,14 +377,6 @@ namespace Content.Client.Cargo.UI
             AccountActionButton.Disabled = TransferSpinBox.Value <= 0 || TransferSpinBox.Value > balance;
 
             RightPart.Visible = orderConsole.Mode != CargoOrderConsoleMode.PrintSlip; // Goobstation
-
-            // CorvaxGoob-CargoFeatures-Start
-            if (_nextAccountsPopulateTime > _timing.CurTime)
-                return;
-
-            _nextAccountsPopulateTime = _timing.CurTime + _accountPopulateInterval;
-            PopulateAccounts();
-            // CorvaxGoob-CargoFeatures-End
         }
     }
 }
