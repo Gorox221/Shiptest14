@@ -334,6 +334,8 @@
     - WhitelistChameleon
     - GasMask
     - Mask
+  - type: IngestionBlocker # Goobstation
+    blockSmokeIngestion: true
 
 - type: entity
   parent: ClothingMaskPullableBase
@@ -373,7 +375,7 @@
         Aerial: 0.5
 
 - type: entity
-  parent: ClothingMaskBreathMedical
+  parent: [ClothingMaskBreathMedical, BaseSecurityContraband] # CorvaxGoob-changes: added BaseSecurityContraband
   id: ClothingMaskBreathMedicalSecurity
   name: military-style medical mask
   description: A medical mask with a small layer of protection against damage and viruses, similar to the one used in the medical units of the first corporate war.
@@ -685,6 +687,7 @@
         Heat: 0.9
   - type: IngestionBlocker # Goobstation
     blockSmokeIngestion: true
+  - type: Hailer # Goobstation - Hailer
 
 - type: entity
   parent: [ ClothingMaskGas, BaseSecurityCargoContraband ]

@@ -102,7 +102,7 @@ public sealed partial class ImplanterSystem : SharedImplanterSystem
     // Goobstation - allow traitors to buy suicide implants (add time multiplier)
     public void TryImplant(ImplanterComponent component, EntityUid user, EntityUid target, EntityUid implanter, float timeMultiplier = 1)
     {
-        var args = new DoAfterArgs(EntityManager, user, component.ImplantTime, new ImplantEvent(), implanter, target: target, used: implanter)
+        var args = new DoAfterArgs(EntityManager, user, component.ImplantTime * timeMultiplier, new ImplantEvent(), implanter, target: target, used: implanter)
         {
             BreakOnDamage = true,
             BreakOnMove = true,

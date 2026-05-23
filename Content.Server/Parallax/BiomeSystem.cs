@@ -122,6 +122,8 @@ public sealed partial class BiomeSystem : SharedBiomeSystem
 
     private void ProtoReload(PrototypesReloadedEventArgs obj)
     {
+        // ClearNoiseCache(); // Goob - Cache Noise // CorvaxGoob-Reverts : Вызывает краши. Требует фикса
+
         if (!obj.ByType.TryGetValue(typeof(BiomeTemplatePrototype), out var reloads))
             return;
 

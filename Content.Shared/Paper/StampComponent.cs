@@ -40,6 +40,7 @@
 
 using Robust.Shared.Serialization;
 using Robust.Shared.Audio;
+using Robust.Shared.GameStates;
 
 namespace Content.Shared.Paper;
 
@@ -62,27 +63,36 @@ public partial struct StampDisplayInfo
 
     [DataField("stampedColor")]
     public Color StampedColor;
+
+    [DataField]
+    public string? StampLargeIcon; // goob
+
+    [DataField]
+    public string? StampFont; // goob
+
+    [DataField]
+    public bool HasIcon = true; // goob
 };
 
-[RegisterComponent]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState] // CorvaxGoob-ChameleonStamp : добавлено серверно-клиенсткое взаимодействие
 public sealed partial class StampComponent : Component
 {
     /// <summary>
     ///     The loc string name that will be stamped to the piece of paper on examine.
     /// </summary>
-    [DataField("stampedName")]
+    [DataField("stampedName"), AutoNetworkedField] // CorvaxGoob-ChameleonStamp : AutoNetworkedField
     public string StampedName { get; set; } = "stamp-component-stamped-name-default";
 
     /// <summary>
     ///     The sprite state of the stamp to display on the paper from paper Sprite path.
     /// </summary>
-    [DataField("stampState")]
+    [DataField("stampState"), AutoNetworkedField] // CorvaxGoob-ChameleonStamp : AutoNetworkedField
     public string StampState { get; set; } = "paper_stamp-generic";
 
     /// <summary>
     /// The color of the ink used by the stamp in UIs
     /// </summary>
-    [DataField("stampedColor")]
+    [DataField("stampedColor"), AutoNetworkedField] // CorvaxGoob-ChameleonStamp : AutoNetworkedField
     public Color StampedColor = Color.FromHex("#BB3232"); // StyleNano.DangerousRedFore
 
     /// <summary>
@@ -90,4 +100,11 @@ public sealed partial class StampComponent : Component
     /// </summary>
     [DataField("sound")]
     public SoundSpecifier? Sound = null;
+
+    /// <summary>
+    ///     The sprite state of the stamp to display on the paper when read from stamp Sprite path.
+    /// </summary>
+    [DataField]
+    public string? StampLargeIcon = null; // Goob Stamp
+
 }

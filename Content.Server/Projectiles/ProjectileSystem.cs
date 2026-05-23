@@ -256,6 +256,11 @@ public sealed class ProjectileSystem : SharedProjectileSystem
             RaiseNetworkEvent(new ImpactEffectEvent(component.ImpactEffect, GetNetCoordinates(xform.Coordinates)), Filter.Pvs(xform.Coordinates, entityMan: EntityManager));
         }
 
+        // CorvaxGoob-RubberAmmo-Start
+        var afterEv = new AfterProjectileHitEvent(component.Damage * _damageableSystem.UniversalProjectileDamageModifier, modifiedDamage, target, component.Shooter);
+        RaiseLocalEvent(uid, ref afterEv);
+        // CorvaxGoob-RubberAmmo-End
+
         Dirty(uid, component);
     }
 

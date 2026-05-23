@@ -40,6 +40,9 @@
   id: Hemostat
 
 - type: Tag
+  id: InfinityPaper
+
+- type: Tag
   id: LavalandJaunter
 
 - type: Tag
@@ -68,6 +71,9 @@
 
 - type: Tag
   id: Photo
+
+- type: Tag
+  id: PokerChip
 
 - type: Tag
   id: Retractor

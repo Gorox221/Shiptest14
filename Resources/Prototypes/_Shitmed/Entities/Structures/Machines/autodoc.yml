@@ -92,12 +92,13 @@
     speechVerb: Robotic
     speechSounds: Pai
   - type: Storage
+    maxItemSize: Huge # CorvaxGoob-Autodoc-Augmentation-fix
     clickInsert: false # incredibly annoying for linking it
     openOnActivate: false # use the verb, UI is higher priority
     grid:
     - 0,0,3,3
   - type: SurgerySpeedModifier
-    speedModifier: 2.5 # CorvaxGoob-Skills-autodoc-surgery-speed
+    speedModifier: 10 # CorvaxGoob-Skills-another-autodoc-fix
   - type: GuideHelp
     guides: [ Autodoc ]
 
@@ -110,7 +111,7 @@
   - type: Machine
     board: AutodocSyndieCircuitboard
   - type: SurgerySpeedModifier
-    speedModifier: 2.5 # CorvaxGoob-Skills-autodoc-surgery-speed
+    speedModifier: 10 # CorvaxGoob-Skills-another-autodoc-fix
 
 # Autodoc tools
 
