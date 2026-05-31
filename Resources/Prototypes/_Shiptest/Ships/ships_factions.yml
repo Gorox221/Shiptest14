@@ -1,9 +1,9 @@
 - type: playerShipSpawnSettings
   id: PlayerShipSpawn
-  maxDistanceFromStationCenter: 15000
-  minDistanceFromStationCenter: 1500
-  placementAttempts: 64
+  maxDistanceFromStationCenter: 12000
   requireDefaultSpaceBiome: true
+  placementAttempts: 64
+  minDistanceFromStationCenter: 1500
 
 - type: playerShipFaction
   id: SyndicatePlayerFaction
