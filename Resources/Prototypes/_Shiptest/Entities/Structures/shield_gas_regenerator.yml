@@ -9,14 +9,12 @@
   - type: Machine
     board: ShieldGasRegeneratorMachineCircuitboard
   - type: Sprite
-    sprite: Structures/Piping/Atmospherics/thermomachine.rsi
+    sprite: _Shiptest/Structures/Machines/shield_regenerator
     snapCardinals: true
     granularLayersRendering: true
     layers:
-    - state: freezerOff
+    - state: regeneratorOff
       map: [ "enum.PowerDeviceVisualLayers.Powered" ]
-    - state: freezerPanelOpen
-      map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
     - state: pipe
       map: [ "enum.PipeVisualLayers.Pipe" ]
       renderingStrategy: Default
@@ -24,22 +22,8 @@
   - type: PipeColorVisuals
   - type: Rotatable
   - type: AtmosPipeColor
-  - type: AtmosPipeLayers
-    spriteLayersRsiPaths:
-      enum.PipeVisualLayers.Pipe:
-        Primary: Structures/Piping/Atmospherics/thermomachine.rsi
-        Secondary: Structures/Piping/Atmospherics/thermomachine_alt1.rsi
-        Tertiary: Structures/Piping/Atmospherics/thermomachine_alt2.rsi
-  - type: GenericVisualizer
-    visuals:
-      enum.PowerDeviceVisuals.Powered:
-        enum.PowerDeviceVisualLayers.Powered:
-          True: { state: freezerOn }
-          False: { state: freezerOff }
   - type: AtmosDevice
     joinSystem: true
-  - type: WiresPanel
-  - type: WiresVisuals
   - type: PipeRestrictOverlap
   - type: NodeContainer
     nodes:
@@ -50,7 +34,7 @@
   - type: Transform
     noRot: false
   - type: ApcPowerReceiver
-    powerLoad: 5000
+    powerLoad: 2500
   - type: ShieldGasRegenerator
     fuelGas: "3"
     gasMixture:

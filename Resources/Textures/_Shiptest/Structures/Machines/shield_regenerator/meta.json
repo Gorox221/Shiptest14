@@ -1,0 +1,19 @@
+{
+    "version": 1,
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "copyright": "Taken from shiptest 13 and modified by Gorox",
+    "license": "CC-BY-SA-3.0",
+    "states": [
+        {
+            "name": "regeneratorOff",
+            "directions": 1
+        },
+        {
+            "name": "pipe",
+            "directions": 4
+        }
+    ]
+}
