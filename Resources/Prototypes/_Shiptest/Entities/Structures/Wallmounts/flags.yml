@@ -1,0 +1,19 @@
+- type: entity
+  parent: BaseFlag
+  id: SolconFlag
+  name: флаг Светлейшей Солнечная и Межсолнечной Конфедерации
+  description: Флаг Солкона. Сделан на сто процентов из натуральных материалов.
+  components:
+  - type: Sprite
+    sprite: _Shiptest/Structures/Wallmounts/flags.rsi
+    state: solcon_flag 
+
+- type: entity
+  parent: BaseFlag
+  id: GezenaFlag
+  name: флаг федерации Пан-Гезена
+  description: Флаг федерации в зеленых и белых цветах.
+  components:
+  - type: Sprite
+    sprite: _Shiptest/Structures/Wallmounts/flags.rsi
+    state: gezena_flag

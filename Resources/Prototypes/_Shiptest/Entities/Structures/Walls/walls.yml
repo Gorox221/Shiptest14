@@ -1,0 +1,34 @@
+- type: entity
+  parent: BaseWall
+  id: WallConcrete
+  name: бетонная стена
+  description: Обычная стена из бетона, используемый на многих планетах для строительства.
+  components:
+  - type: Sprite
+    sprite: _Shiptest/Structures/Walls/concrete.rsi
+  - type: Icon
+    sprite: _Shiptest/Structures/Walls/concrete.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 300
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: concrete
+  - type: RustRequiresPathStage # Goobstation
+    pathStage: 4 # Mark of rust
+  - type: CosmicCorruptible # DeltaV - Cosmic Cult
+    convertTo: WallCosmicCult
